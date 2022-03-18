@@ -70,19 +70,11 @@ function registerHandlers() {
 		});
 	}
 	function keepBusy(event) {
-		// TODO: Multiple ways to keep busy:
-		// - Can add delay in each handler, so multiple events add up
-		// - Can add delay in rAF, once per handler, so multiple events add up, but lets frames render
-		// - Can add delay in rAF, once per rAF, so multiple events don't add up
 		// block(delayAmount);
 		// blockingRaf(delayAmount);
 		onceBlockingRaf(delayAmount);
 	}
-	const handler = (event) => {
-		// console.log(`handler: ${event.timeStamp.toFixed(2)} ${event.type}`);
-		keepBusy();
-	}
-	function addHandlers() {
+	function addHandlers(handler) {
 		for (let event of EVENTS) {
 			document.addEventListener(event, handler);
 		}
@@ -93,7 +85,16 @@ function registerHandlers() {
 		}
 	}
 
-	addHandlers();
+	// TODO: Multiple ways to keep busy:
+	// - No handlers at all
+	// - Handlers, but with no delay at all
+	// - Add delay in each handler, so multiple events add up
+	// - Add delay in rAF, once per handler, so multiple events add up, but lets frames render
+	// - Add delay in rAF, once per rAF, so multiple events don't add up
+	// And, delay can be fixed, or based on a target time.
+	// For example, each handler can schedule a delayUntil(event.timeStamp + delay).
+	// If multiple handlers already blocked, 
+	addHandlers(keepBusy);
 }
 
 function startAddingDelay() {

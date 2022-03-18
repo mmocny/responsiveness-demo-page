@@ -22,8 +22,14 @@
 }
 
 #elements {
+	width: 100%;
 	display: grid;
 	grid-template-columns: auto;
-	margin-top: auto;
-	margin-bottom: auto;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
