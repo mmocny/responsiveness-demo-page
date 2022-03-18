@@ -1,0 +1,217 @@
+<!doctype html>
+<head>
+	<link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+
+	<link href="styles.css" rel="stylesheet">
+</head>
+<body>
+
+	<div id="elements">
+
+	<div>
+		<button class="mdc-button">
+			<div class="mdc-button__ripple"></div>
+			<span class="mdc-button__label">Button</span>
+		</button>
+
+		<button class="mdc-button">
+			<div class="mdc-button__ripple"></div>
+			<span class="mdc-button__label">Button2</span>
+		</button>
+	</div>
+
+	<div>
+		<label class="mdc-text-field mdc-text-field--filled">
+			<span class="mdc-text-field__ripple"></span>
+			<!-- <span class="mdc-floating-label" id="my-label-id">Hint text</span> -->
+			<input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+			<span class="mdc-line-ripple"></span>
+		  </label>
+	</div>
+
+	<div>
+	<div class="mdc-form-field">
+		<div class="mdc-checkbox">
+		  <input type="checkbox"
+				 class="mdc-checkbox__native-control"
+				 id="checkbox-1"/>
+		  <div class="mdc-checkbox__background">
+			<svg class="mdc-checkbox__checkmark"
+				 viewBox="0 0 24 24">
+			  <path class="mdc-checkbox__checkmark-path"
+					fill="none"
+					d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+			</svg>
+			<div class="mdc-checkbox__mixedmark"></div>
+		  </div>
+		  <div class="mdc-checkbox__ripple"></div>
+		</div>
+		<label for="checkbox-1">Checkbox 1</label>
+
+		<div class="mdc-checkbox">
+			<input type="checkbox"
+				   class="mdc-checkbox__native-control"
+				   id="checkbox-1"/>
+			<div class="mdc-checkbox__background">
+			  <svg class="mdc-checkbox__checkmark"
+				   viewBox="0 0 24 24">
+				<path class="mdc-checkbox__checkmark-path"
+					  fill="none"
+					  d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+			  </svg>
+			  <div class="mdc-checkbox__mixedmark"></div>
+			</div>
+			<div class="mdc-checkbox__ripple"></div>
+		  </div>
+		<label for="checkbox-1">Checkbox 2</label>
+
+		<div class="mdc-checkbox">
+			<input type="checkbox"
+				   class="mdc-checkbox__native-control"
+				   id="checkbox-1"/>
+			<div class="mdc-checkbox__background">
+			  <svg class="mdc-checkbox__checkmark"
+				   viewBox="0 0 24 24">
+				<path class="mdc-checkbox__checkmark-path"
+					  fill="none"
+					  d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+			  </svg>
+			  <div class="mdc-checkbox__mixedmark"></div>
+			</div>
+			<div class="mdc-checkbox__ripple"></div>
+		  </div>
+		<label for="checkbox-1">Checkbox 3</label>
+	  </div>
+	</div>
+
+	<div>
+		<div class="mdc-form-field">
+			<div class="mdc-radio">
+			  <input class="mdc-radio__native-control" type="radio" id="radio-1" name="radios" checked>
+			  <div class="mdc-radio__background">
+				<div class="mdc-radio__outer-circle"></div>
+				<div class="mdc-radio__inner-circle"></div>
+			  </div>
+			  <div class="mdc-radio__ripple"></div>
+			</div>
+			<label for="radio-1">Radio 1</label>
+
+			<div class="mdc-radio">
+				<input class="mdc-radio__native-control" type="radio" id="radio-1" name="radios" checked>
+				<div class="mdc-radio__background">
+				  <div class="mdc-radio__outer-circle"></div>
+				  <div class="mdc-radio__inner-circle"></div>
+				</div>
+				<div class="mdc-radio__ripple"></div>
+			  </div>
+			  <label for="radio-1">Radio 2</label>
+
+			  <div class="mdc-radio">
+				<input class="mdc-radio__native-control" type="radio" id="radio-1" name="radios" checked>
+				<div class="mdc-radio__background">
+				  <div class="mdc-radio__outer-circle"></div>
+				  <div class="mdc-radio__inner-circle"></div>
+				</div>
+				<div class="mdc-radio__ripple"></div>
+			  </div>
+			  <label for="radio-1">Radio 3</label>
+		  </div>
+	</div>
+
+	<div>
+		<div class="mdc-tab-bar" role="tablist">
+
+			<div class="mdc-tab-scroller">
+			  <div class="mdc-tab-scroller__scroll-area">
+				<div class="mdc-tab-scroller__scroll-content">
+				  <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0">
+					<span class="mdc-tab__content">
+					  <span class="mdc-tab__icon material-icons" aria-hidden="true">favorite</span>
+					  <span class="mdc-tab__text-label">Favorites</span>
+					</span>
+					<span class="mdc-tab-indicator mdc-tab-indicator--active">
+					  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+					</span>
+					<span class="mdc-tab__ripple"></span>
+				  </button>
+				</div>
+
+			  <div class="mdc-tab-scroller__scroll-content">
+				<button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0">
+				  <span class="mdc-tab__content">
+					<span class="mdc-tab__icon material-icons" aria-hidden="true">mood</span>
+					<span class="mdc-tab__text-label">Smile</span>
+				  </span>
+				  <span class="mdc-tab-indicator mdc-tab-indicator--active">
+					<span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+				  </span>
+				  <span class="mdc-tab__ripple"></span>
+				</button>
+			  </div>
+			</div>
+		  </div>
+
+		</div>
+	</div>
+
+	<!-- <div>
+		<span class="mdc-chip-set" role="grid">
+			<span class="mdc-chip-set__chips" role="presentation">
+			  <span class="mdc-chip" role="row" id="c0">
+				<span class="mdc-chip__cell mdc-chip__cell--primary" role="gridcell">
+				  <button class="mdc-chip__action mdc-chip__action--primary" type="button" tabindex="0">
+					<span class="mdc-chip__ripple mdc-chip__ripple--primary"></span>
+					<span class="mdc-chip__text-label">Chip one</span>
+				  </button>
+				</span>
+			  </span>
+			  <span class="mdc-chip" role="row" id="c1">
+				<span class="mdc-chip__cell mdc-chip__cell--primary" role="gridcell">
+				  <button class="mdc-chip__action mdc-chip__action--primary" type="button" tabindex="-1">
+					<span class="mdc-chip__ripple mdc-chip__ripple--primary"></span>
+					<span class="mdc-chip__text-label">Chip two</span>
+				  </button>
+				</span>
+			  </span>
+			</span>
+		  </span>
+
+	</div> -->
+
+	</div>
+
+	<button id="fab" class="mdc-fab" aria-label="settings">
+		<div class="mdc-fab__ripple"></div>
+		<span class="mdc-fab__icon material-icons">settings</span>
+	</button>
+
+	<div id="inp-score" role="progressbar" class="mdc-linear-progress" aria-label="Example Progress Bar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0">
+		<div class="mdc-linear-progress__buffer">
+		  <div class="mdc-linear-progress__buffer-bar"></div>
+		  <div class="mdc-linear-progress__buffer-dots"></div>
+		</div>
+		<div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+		  <span class="mdc-linear-progress__bar-inner"></span>
+		</div>
+		<div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+		  <span class="mdc-linear-progress__bar-inner"></span>
+		</div>
+	  </div>
+
+	  <div id="delay-amount" role="progressbar" class="mdc-linear-progress" aria-label="Example Progress Bar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0">
+		<div class="mdc-linear-progress__buffer">
+		  <div class="mdc-linear-progress__buffer-bar"></div>
+		  <div class="mdc-linear-progress__buffer-dots"></div>
+		</div>
+		<div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+		  <span class="mdc-linear-progress__bar-inner"></span>
+		</div>
+		<div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+		  <span class="mdc-linear-progress__bar-inner"></span>
+		</div>
+	  </div>
+
+	<script type="module" src="./main.js"></script>
+</body>
