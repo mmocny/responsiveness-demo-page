@@ -99,7 +99,7 @@ function registerHandlers() {
 
 function startAddingDelay() {
 	const MIN_DELAY = 0;
-	const MAX_DELAY = 1000;
+	const MAX_DELAY = 500;
 	const RAMP_DELAY = 5000;
 	const RAMP_TIME = 30000;
 
@@ -128,7 +128,7 @@ function startMeasuringInp() {
 		const ratio = Math.max(0, Math.min(1, progress));
 		inpProgress.foundation.setProgress(ratio);
 		
-		console.log(ratio, metric);
+		console.log('[INP]', metric.value, metric);
 
 	}, true);
 }
