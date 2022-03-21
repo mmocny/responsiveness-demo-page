@@ -33,3 +33,15 @@ body {
     align-items: center;
     justify-content: center;
 }
+/* 
+#elements > * {
+	display: none;
+}
+
+#elements > *:has(> .mdc-form-field > .mdc-checkbox) {
+	display: block;
+}
+
+.mdc-checkbox:not(:first-of-type), .mdc-form-field > label:not(:first-of-type) {
+	display: none;
+} */
