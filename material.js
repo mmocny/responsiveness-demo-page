@@ -1,4 +1,4 @@
-import { getINP } from './web-vitals.js';
+import { getINP, reportAllInteractions } from './getINP.js';
 
 let delayAmount = 0;
 let delayProgress;
@@ -12,6 +12,14 @@ function attachMaterial() {
 }
 
 function registerHandlers() {
+	const fab = document.querySelector('.mdc-fab');
+	fab.addEventListener('click', (event) => {
+		stopAddingDelay();
+		setDelay(200);
+	});
+}
+
+function addBusyHandlers() {
 	// TODO: Removing DOWN handlers for now, just because they render in separate frames
 	const EVENTS = [
 		"keydown",
@@ -97,11 +105,23 @@ function registerHandlers() {
 	addHandlers(keepBusy);
 }
 
+let interval;
 function startAddingDelay() {
 	const MIN_DELAY = 0;
 	const MAX_DELAY = 500;
 	const RAMP_DELAY = 5000;
 	const RAMP_TIME = 30000;
+
+	// interval = setInterval(() => {
+	// 	const progress = (performance.now() - RAMP_DELAY) / RAMP_TIME;
+	// 	// Clamp progress to [0,1];
+	// 	setDelay(MIN_DELAY + (MAX_DELAY - MIN_DELAY) * delay_ratio);
+
+
+	// 	if (delay_ratio == 1) {
+	// 		stopAddingDelay();
+	// 	}
+	// }, 100);
 
 	const interval = setInterval(() => {
 		const progress = (performance.now() - RAMP_DELAY) / RAMP_TIME;
@@ -117,6 +137,18 @@ function startAddingDelay() {
 		}
 	}, 100);
 }
+function stopAddingDelay() {
+	clearInterval(interval);
+}
+// function setDelay(ms) {
+// 	const delay_ratio = Math.max(0, Math.min(1, progress));
+// 	const progress = (performance.now() - RAMP_DELAY) / RAMP_TIME;
+// 	const delay_ratio = Math.max(0, Math.min(1, progress));
+
+// 	delayAmount = ms;
+// 	// console.log('delay:', delayAmount);
+// 	delayProgress.foundation.setProgress(delay_ratio);
+// }
 
 function startMeasuringInp() {
 	const GOOD = 200;
@@ -140,7 +172,8 @@ function startMeasuringMainThreadDelayOnOffscreenCanvas() {
 function main() {
 	attachMaterial();
 	registerHandlers();
-	startAddingDelay();
+	addBusyHandlers();
+	// startAddingDelay();
 	startMeasuringInp();
 	startMeasuringMainThreadDelayOnOffscreenCanvas();
 }
