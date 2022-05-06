@@ -1,4 +1,5 @@
-import { getINP, reportAllInteractions } from './getINP.js';
+import { getINP, reportAllInteractions } from '../snippets/getINP.js';
+import { addResponsivenessJank } from '../snippets/addResponsivenessJank.js';
 
 let delayAmount = 0;
 let delayProgress;
@@ -19,91 +20,6 @@ function registerHandlers() {
 	});
 }
 
-function addBusyHandlers() {
-	// TODO: Removing DOWN handlers for now, just because they render in separate frames
-	const EVENTS = [
-		"keydown",
-		// "keyup",
-		"keypress",
-		// "pointerdown",
-		"pointerup",
-		"pointercancel",
-		// "touchstart",
-		// "touchend",
-		// "touchcancel",
-		// "mousedown",
-		// "mouseup",
-		// "gotpointercapture",
-		// "lostpointercapture",
-		"click",
-		"dblclick",
-		"auxclick",
-		"contextmenu",
-		// "pointerleave",
-		// "pointerout",
-		// "pointerover",
-		// "pointerenter",
-		// "mouseout",
-		// "mouseover",
-		// "mouseleave",
-		// "mouseenter",
-		// "lostpointercapture",
-		"dragstart",
-		"dragend",
-		// "dragenter",
-		// "dragleave",
-		// "dragover",
-		"drop",
-		// "beforeinput",
-		// "input",
-		"compositionstart",
-		"compositionupdate",
-		"compositionend",
-	];
-	function block(ms) {
-		const end = performance.now() + ms;
-		while (performance.now() < end);
-	}
-	function blockingRaf(ms) {
-		requestAnimationFrame((time) => {
-			block(ms);
-		});
-	}
-	let raf;
-	function onceBlockingRaf(ms) {
-		if (raf) return;
-		raf = requestAnimationFrame((time) => {
-			raf = undefined;
-			block(ms);
-		});
-	}
-	function keepBusy(event) {
-		// block(delayAmount);
-		// blockingRaf(delayAmount);
-		onceBlockingRaf(delayAmount);
-	}
-	function addHandlers(handler) {
-		for (let event of EVENTS) {
-			document.addEventListener(event, handler);
-		}
-	}
-	function removeHandlers() {
-		for (let event of EVENTS) {
-			document.removeEventListener(event, handler);
-		}
-	}
-
-	// TODO: Multiple ways to keep busy:
-	// - No handlers at all
-	// - Handlers, but with no delay at all
-	// - Add delay in each handler, so multiple events add up
-	// - Add delay in rAF, once per handler, so multiple events add up, but lets frames render
-	// - Add delay in rAF, once per rAF, so multiple events don't add up
-	// And, delay can be fixed, or based on a target time.
-	// For example, each handler can schedule a delayUntil(event.timeStamp + delay).
-	// If multiple handlers already blocked, 
-	addHandlers(keepBusy);
-}
 
 let interval;
 function startAddingDelay() {
@@ -172,8 +88,7 @@ function startMeasuringMainThreadDelayOnOffscreenCanvas() {
 function main() {
 	attachMaterial();
 	registerHandlers();
-	addBusyHandlers();
-	// startAddingDelay();
+	addResponsivenessJank();
 	startMeasuringInp();
 	startMeasuringMainThreadDelayOnOffscreenCanvas();
 }
