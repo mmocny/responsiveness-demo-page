@@ -109,19 +109,19 @@ getINP(({ value, entries, interactionCount }) => {
 
 	// Thanks philipwalton!
 	// Add measures so you can see the breakdown in the DevTools performance panel.
-	performance.measure(`[Web Vitals Extension] INP.duration`, {
+	performance.measure(`INP.duration [${currentINP.name}]`, {
 		start: currentINP.startTime,
 		end: presentationTime,
 	});
-	performance.measure(`[Web Vitals Extension] INP.inputDelay`, {
+	performance.measure(`INP.inputDelay`, {
 		start: currentINP.startTime,
 		end: currentINP.processingStart,
 	});
-	performance.measure(`[Web Vitals Extension] INP.processingTime`, {
+	performance.measure(`INP.processingTime`, {
 		start: currentINP.processingStart,
 		end: currentINP.processingEnd,
 	});
-	performance.measure(`[Web Vitals Extension] INP.presentationDelay`, {
+	performance.measure(`INP.presentationDelay`, {
 		start: currentINP.processingEnd,
 		end: adjustedPresentationTime,
 	});

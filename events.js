@@ -1,5 +1,8 @@
 import { getINP, estimateInteractionCount } from './getINP.js';
+import { addBusyHandlers, removeBusyHandlers } from './addBusyHandlers.js';
+import * as EventsByType from './events.json';
 
+// TODO: use EventsByType to build this list + ignore list, instead
 const EVENTS = [
   "keydown",
   "keyup",
