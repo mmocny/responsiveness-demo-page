@@ -1,6 +1,6 @@
-import { getINP, estimateInteractionCount } from './getINP.js';
-import { addBusyHandlers, removeBusyHandlers } from './addBusyHandlers.js';
-import * as EventsByType from './events.json';
+import { getINP, estimateInteractionCount } from '../snippets/getINP.js';
+// import { addResponsivenessJank } from '../snippets/addResponsivenessJank.js';
+// import * as EventsByType from './EventTypes.json';
 
 // TODO: use EventsByType to build this list + ignore list, instead
 const EVENTS = [
