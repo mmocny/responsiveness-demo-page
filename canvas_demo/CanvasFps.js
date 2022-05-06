@@ -1,4 +1,4 @@
-import { ThreadLocalRAFIterator } from './AnimationFrameIterator.mjs';
+import { ThreadLocalRAFIterator } from './AnimationFrameIterator.js';
 
 export class CanvasFps {
   constructor(ctx, fpsTracker) {

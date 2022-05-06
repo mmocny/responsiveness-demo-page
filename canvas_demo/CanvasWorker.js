@@ -1,6 +1,6 @@
-import { FpsTracker } from './FpsTracker.mjs';
-import { CanvasFps } from './CanvasFps.mjs';
-import { ThreadLocalRAFIterator, PostMessageRAFIterator } from './AnimationFrameIterator.mjs';
+import { FpsTracker } from './FpsTracker.js';
+import { CanvasFps } from './CanvasFps.js';
+import { ThreadLocalRAFIterator, PostMessageRAFIterator } from './AnimationFrameIterator.js';
 
 // As per: https://developers.google.com/web/updates/2018/08/offscreen-canvas
 
