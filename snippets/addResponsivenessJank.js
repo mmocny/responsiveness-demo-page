@@ -14,20 +14,19 @@
  * - Queue a singleton rAF callback that adds some fixed processing time.  Only one delay per frame, since multiple events do not "add up"... still, sometimes delays are larger than expect if any other long tasks sneak in.
  *     i.e. if (!raf) raf = requestAnimationFrame(() => block(100));
  * 
- * - Queue a singleton rAF callback that adds variable processing time based on a desired timeout relative to some timeStamp.  Most likely to have expected amount of target delay, whatever the cause.
- *     i.e. if (!raf) raf = requestAnimationFrame(() => blockUntil(event.timeStamp + 100));
+ * - Queue a rAF callback that adds variable processing time based on a desired timeout relative to some timeStamp.  Most likely to have expected amount of target delay, whatever the cause.
+ *     i.e. requestAnimationFrame(() => blockUntil(event.timeStamp + 100));
  * 
  * (... And probably many other combinations of task scheduling and jank approaches.)
  * */
 
-// Removing some handlers, such that we have one down/up per interaction type, just because they render in separate frames
-const EVENTS = [
+const EVENT_TYPES = [
   "keydown",
   // "keyup",
   "keypress",
-  // "pointerdown",
+  "pointerdown",
   "pointerup",
-  "pointercancel",
+  // "pointercancel",
   // "touchstart",
   // "touchend",
   // "touchcancel",
@@ -48,58 +47,60 @@ const EVENTS = [
   // "mouseleave",
   // "mouseenter",
   // "lostpointercapture",
-  "dragstart",
-  "dragend",
+  // "dragstart",
+  // "dragend",
   // "dragenter",
   // "dragleave",
   // "dragover",
-  "drop",
+  // "drop",
   // "beforeinput",
   // "input",
-  "compositionstart",
-  "compositionupdate",
-  "compositionend",
+  // "compositionstart",
+  // "compositionupdate",
+  // "compositionend",
 ];
 
 function block(ms) {
   const end = performance.now() + ms;
   while (performance.now() < end);
 }
-function blockingRaf(ms) {
-  requestAnimationFrame((time) => {
-    block(ms);
-  });
+
+function blockUntil(ts) {
+  while (performance.now() < ts);
 }
 
 let raf;
-function onceBlockingRaf(ms) {
+function onceRaf(callback) {
   if (raf) return;
   raf = requestAnimationFrame((time) => {
     raf = undefined;
-    block(ms);
+    callback(time);
   });
 }
 
-function keepBusy(event) {
+function keepBusy(event, delayAmount) {
   // Option 1: Do nothing
 
   // Option 2:
   // block(delayAmount);
 
   // Option 3:
-  // onceBlockingRaf(delayAmount);
+  // requestAnimationFrame(() => block(delayAmount));
 
-  // blockingRaf(delayAmount);
-  onceBlockingRaf(delayAmount);
+  // Option 4:
+  // onceRaf(() => block(delayAmount));
+
+  // Variable amount of delay:
+  requestAnimationFrame(() => blockUntil(event.timeStamp + delayAmount));
 }
 
-export function addBusyHandlers() {
-  for (let event of EVENTS) {
-    document.addEventListener(event, keepBusy);
+export function addResponsivenessJank(getDelayAmount = () => window.delayAmount || 100) {
+  for (let eventType of EVENT_TYPES) {
+    document.addEventListener(eventType, (event) => keepBusy(event, getDelayAmount()));
   }
 }
-export function removeBusyHandlers() {
-  for (let event of EVENTS) {
-    document.removeEventListener(event, keepBusy);
-  }
-}
+// export function removeResponsivenessJank() {
+//   for (let event of EVENTS) {
+//     document.removeEventListener(event, keepBusy);
+//   }
+// }
