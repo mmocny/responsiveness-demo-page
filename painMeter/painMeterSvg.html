@@ -74,6 +74,8 @@
 
 <script type="module">
 
+import { addResponsivenessJank } from '../snippets/addResponsivenessJank.js';
+
 const SECONDS_AROUND = 5;
 const SPEED = 2 * Math.PI / SECONDS_AROUND / 1000;
 const FRAMES = 10;
@@ -149,5 +151,6 @@ function start() {
 }
 
 start();
+addResponsivenessJank();
 
 </script>
