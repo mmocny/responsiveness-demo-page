@@ -1,5 +1,5 @@
 import { getINP, estimateInteractionCount } from '../snippets/getINP.js';
-// import { addResponsivenessJank } from '../snippets/addResponsivenessJank.js';
+import { addResponsivenessJank } from '../snippets/addResponsivenessJank.js';
 // import * as EventsByType from './EventTypes.json';
 
 // TODO: use EventsByType to build this list + ignore list, instead
@@ -44,51 +44,49 @@ const EVENTS = [
 ];
 
 let enableLog = true;
-function replaceConsole() {
-  var log = console.log.bind(console);
-  var group = console.group.bind(console);
-  console.log = function (...args) {
-	log(...args);
-	let el = document.getElementById('log');
-	if (enableLog) {
-	  el.innerHTML += `<pre>${args.join(' ')}<pre>`;
-	  el.scrollTop = el.scrollHeight;
-	}
-  }
-  console.group = function (...args) {
-	group(...args);
-	let el = document.getElementById('log');
-	// el.innerHTML += `<hr/>`;
-  }
+function log(...args) {
+  if (!enableLog) return;
+  console.log(...args);
+  let el = document.getElementById('log');
+  el.innerHTML += `<pre>${args.join(' ')}<pre>`;
+  el.scrollTop = el.scrollHeight;
+}
+function group(...args) {
+  if (!enableLog) return;
+  console.group(...args);
+  let el = document.getElementById('log');
+  // el.innerHTML += `<hr/>`;
+}
+function groupEnd(...args) {
+  if (!enableLog) return;
+  console.groupEnd(...args);
 }
 
-function reportEvents() {
+function logEvents() {
   const observer = new PerformanceObserver(list => {
-	const entries = list.getEntries().filter(entry => EVENTS.includes(entry.name));
-	if (entries.length == 0) return;
+    const entries = list.getEntries().filter(entry => EVENTS.includes(entry.name));
+    if (entries.length == 0) return;
 
-	console.group();
-	for (let entry of entries) {
-	  const renderTime = Math.round((entry.startTime + entry.duration) / 8) * 8;
-	  console.log(`renderTime:${renderTime} ${entry.name} id:${entry.interactionId}`);
-	}
-	console.groupEnd();
+    group();
+    for (let entry of entries) {
+      const renderTime = Math.round((entry.startTime + entry.duration) / 8) * 8;
+      log(`renderTime:${renderTime} ${entry.name} id:${entry.interactionId}`);
+    }
+    groupEnd();
   });
 
   observer.observe({
-	type: "event",
-	durationThreshold: 0, // 16 minumum by spec
-	buffered: true
+    type: "event",
+    durationThreshold: 0, // 16 minumum by spec
+    buffered: true
   });
 }
-
-replaceConsole();
-reportEvents();
 
 let currentINP;
 getINP((metric) => {
   currentINP = metric;
 }, true);
+
 setInterval(() => {
   const counts = {
 	inp: currentINP?.value,
@@ -106,61 +104,38 @@ function randomColor() {
 }
 
 function block(ms) {
-  // console.log(`Starting to sync block for ${ms}ms`);
   const end = performance.now() + ms;
   while (performance.now() < end);
 }
 
-function blockingRaf(ms) {
-  requestAnimationFrame((time) => {
-	// console.log('Starting rAF handler');
-	block(ms);
-  });
-}
-
-function keepBusy(event) {
-  block(HANDLER_BLOCK_TIME);
-  blockingRaf(RAF_BLOCK_TIME);
-  document.body.style['background-color'] = randomColor();
-}
-
-// function addPreventDefault(handler) {
-//   return (...args) => {
-//     handler(...args);
-//     event.preventDefault();
-//   };
-// }
-
 const handler = (event) => {
-  console.log(`timeStamp:${event.timeStamp.toFixed(2)} ${event.type}`);
-  keepBusy();
+  log(`timeStamp:${event.timeStamp.toFixed(2)} ${event.type}`);
+
+  document.body.style['background-color'] = randomColor();
+
+  const shouldBlock = document.getElementById('checky').checked;
+  if (shouldBlock) {
+    block(HANDLER_BLOCK_TIME);
+    requestAnimationFrame((time) => {
+      block(RAF_BLOCK_TIME);
+    });
+  }
 }
 
 function addHandlers() {
   for (let event of EVENTS) {
-	document.addEventListener(event, handler);
+    document.addEventListener(event, handler);
   }
-}
-function removeHandlers() {
-  for (let event of EVENTS) {
-	document.removeEventListener(event, handler);
-  }
+
+  const loggy = document.getElementById('loggy');
+  loggy.addEventListener('change', (event) => {
+    enableLog = event.target.checked;
+  });
+  loggy.click();
 }
 
-const checky = document.getElementById('checky');
-checky.addEventListener('change', (event) => {
-  if (event.target.checked) {
-	addHandlers();
-  } else {
-	removeHandlers();
-  }
-});
-checky.click();
 
-const loggy = document.getElementById('loggy');
-loggy.addEventListener('change', (event) => {
-  enableLog = event.target.checked;
-  event.stopPropagation();
-  event.preventDefault();
-});
-loggy.click();
+
+addHandlers();
+logEvents();
+addResponsivenessJank();
