@@ -7,7 +7,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: -256px;
+  top: 0;
   bottom: 0;
   margin: auto;
   box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.2);
@@ -41,6 +41,9 @@
 
 </style>
 
+
+
+
 <div class="stutterer">
 	<svg height="310" width="310">
 		<circle
@@ -65,9 +68,14 @@
 	</svg>
 </div>
 
+
+
+
+
 <script type="module">
 
-const SPEED = 0.003 / Math.PI;
+const SECONDS_AROUND = 5;
+const SPEED = 2 * Math.PI / SECONDS_AROUND / 1000;
 const FRAMES = 10;
 
 const faceRef = document.querySelector('svg > circle');
@@ -75,29 +83,25 @@ const arcGroupRef = document.querySelector('svg > g');
 const clockHandRef = document.querySelector('svg > path');
 
 function svgToCanvas(svg, ctx) {
-	function copySvgToCanvas(svg, canvas) {
 	const { width, height } = svg.getBBox(); 
-	const blob = new Blob([svg.outerHTML],{type:'image/svg+xml;charset=utf-8'});
-	const blobURL = URL.createObjectURL(blob);
-	const image = new Image();
-	image.onload = () => {
-		canvas.widht = width;
-		canvas.height = height;
-		canvas.getContext('2d').drawImage(image, 0, 0, width, height );
-	};
-	image.src = blobURL;
-
-}	ctx.drawImage(img, 0, 0, width, height);
+	// const blob = new Blob([svg.outerHTML],{type:'image/svg+xml;charset=utf-8'});
+	// const blobURL = URL.createObjectURL(blob);
+	// const image = new Image();
+	// image.onload = () => {
+		// canvas.widht = width;
+		// canvas.height = height;
+		ctx.drawImage(image, 0, 0, width, height );
+	// };
+	// image.src = blobURL;
 }
 
 let frame = null;
 let hitCounter = 0;
 let rotation = 0;
-let t0 = Date.now();
+let t0 = performance.now();
 let arcs = [];
 
-function animate() {
-    const now = Date.now();
+function animate(now) {
     const td = now - t0;
     rotation = (rotation + SPEED * td) % (2 * Math.PI);
     t0 = now;
@@ -145,4 +149,5 @@ function start() {
 }
 
 start();
+
 </script>
