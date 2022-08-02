@@ -1,6 +1,10 @@
 // Duration has a rounded value to 8ms, but startTime is accurate
 function getReportedRenderTimeForEntry(entry) {
-	return entry.startTime + entry.duration;
+	const presentationTime = entry.startTime + entry.duration;
+	// Sometimes there is no presentation time, in which case processingEnd is used as the end time
+	// When that happens, we may as well use accurate processingEnd
+	// TODO: consider using processingEnd whenever presentationTime is within 4ms here.
+	return Math.max(presentationTime, entry.processingEnd);
 }
 
 // For events that share the same real presentation time, because we round() off duration to 8ms, an odd thing happens:
@@ -55,7 +59,11 @@ function estimateRenderTimeForFrame(entries) {
 	const max = Math.max(...renderTimes);
 	const mid = (max+min)/2;
 	const roundedMid = Math.floor((mid+4)/8)*8;
-	return roundedMid;
+	// return roundedMid;
+	// TODO: looking up the nearest frame presentation time via the rAF time of the next frame
+	// TODO: You may be able to call rAF from within the PerformanceObserver callback...  but it risks not being scheduled.
+	// TODO: Alternatively, a single rAF call could be used to align to vsync?
+	return mid;
 }
 
 // Unlike for InteractionID, here I assign labels to *all* the event types.
@@ -117,44 +125,12 @@ function getInteractionType(entry) {
 	}
 }
 
-// Better would be to use DevTool's DOMPath
-// https://github.com/ChromeDevTools/devtools-frontend/blob/ca17a55104e6baf8d4ab360b484111bfa93c9b7f/front_end/panels/elements/DOMPath.ts
-function getInteractionTargetSelector(entry) {
-	function getDomPath(el) {
-		if (!el)
-			return 'Unknown';
-		if (el === document)
-			return 'document';
-		if (el === document.body)
-			return 'body';
-
-		let nodeName = el.nodeName.toLowerCase();
-		if (el.id) {
-			nodeName += '#' + el.id;
-		} else if (el.classList.length) {
-			nodeName += '.' + [...el.classList].join('.');
-		}
-		// TODO: attributes like type
-		// TODO: nth-child
-		return getDomPath(el.parentNode) + ' ' + nodeName;
-	};
-	try {
-		return getDomPath(entry.target);
-	} catch (ex) {
-		return 'Unknown';
-	}
-}
-
 function getInteractionTypesForFrame(entries) {
 	return [...new Set(entries.map(entry => getInteractionType(entry)))];
 }
 
 function getInteractionIdsForFrame(entries) {
 	return [...new Set(entries.map(entry => entry.interactionId).filter((id) => id != 0))];
-}
-
-function getInteractionTargetSelectorsForFrame(entries) {
-	return [...new Set(entries.map(entry => getInteractionTargetSelector(entry)))];
 }
 
 // Calculate the total time spent inside entries we care about.
@@ -192,7 +168,6 @@ function getTimingsForFrame(entries) {
 	const renderTime = estimateRenderTimeForFrame(entries);
 	const interactionIds = getInteractionIdsForFrame(entries);
 	const interactionTypes = getInteractionTypesForFrame(entries);
-	const targetSelectors = getInteractionTargetSelectorsForFrame(entries);
 	// console.log(targetSelectors);
 	const numEntries = entries.length;
 
@@ -225,85 +200,103 @@ function getTimingsForFrame(entries) {
 		psPct,
 		gapPct,
 		presentatonPct,
+
+		entries,
 	}
 }
 
-function decorateTimings(timings) {
-	pctToString(timings);
-	roundOffNumbers(timings, 2);
-
-	timings.interactionIds = timings.interactionIds.join(',');
-	timings.interactionTypes = timings.interactionTypes.join(',');
-
-	return timings;
-}
-
-// Make results easier to look at
-function roundOffNumbers(obj, places) {
-	for (let key in obj) {
-		const val = obj[key];
-		if (typeof val === 'number') {
-			obj[key] = Number(val.toFixed(places));
-		}
-	}
-	return obj;
-}
-
-function pctToString(obj) {
-	for (let key in obj) {
-		const val = obj[key];
-		if (key.endsWith('Pct')) {
-			obj[key] = `${(val*100).toFixed(2)}%`;
-		}
-	}
-	return obj;
-}
-
+const AllEntries = [];
 function measureResponsiveness() {
-	// Storing all entries may have negative GC implications
-	// Not just the entries, but also the Node references from entry.target... not sure if those are weak?
-	const AllEntries = [];
-
 	const observer = new PerformanceObserver(list => {
 		AllEntries.push(...list.getEntries());
+	});
 
-		const AllInteractionIds = getInteractionIdsForFrame(AllEntries);
-		const entriesByFrame = groupEntriesByEstimatedFrameRenderTime(AllEntries);
+	observer.observe({
+		type: "event",
+		durationThreshold: 0, // 16 minumum by spec
+		buffered: true
+	});
+}
+
+function reportAsTable() {
+	function decorateTimings(timings) {
+		pctToString(timings);
+		roundOffNumbers(timings, 2);
+	
+		timings.interactionIds = timings.interactionIds.join(',');
+		timings.interactionTypes = timings.interactionTypes.join(',');
+
+		delete timings.entries;
+	
+		return timings;
+	}
+	
+	// Make results easier to look at
+	function roundOffNumbers(obj, places) {
+		for (let key in obj) {
+			const val = obj[key];
+			if (typeof val === 'number') {
+				obj[key] = Number(val.toFixed(places));
+			}
+		}
+		return obj;
+	}
+	
+	function pctToString(obj) {
+		for (let key in obj) {
+			const val = obj[key];
+			if (key.endsWith('Pct')) {
+				obj[key] = `${(val*100).toFixed(2)}%`;
+			}
+		}
+		return obj;
+	}
+
+	const AllInteractionIds = getInteractionIdsForFrame(AllEntries);
+	const entriesByFrame = groupEntriesByEstimatedFrameRenderTime(AllEntries);
+	
+	// Filter *frames* which have *only* HOVER interactions.  Leave HOVER events in for the remaining frames to account for timings.
+	// TODO: may want to filer down to only KEY/TAP/DRAG, but I left everything else since its not that much noise typically.
+	let timingsByFrame = entriesByFrame.map(getTimingsForFrame)
+		.filter(timings => timings.interactionTypes.some(type => type != "HOVER"));
+
+	// Optional: Filter down the single longest frame
+	// timingsByFrame = [timingsByFrame.reduce((prev,curr) => (curr.duration > prev.duration) ? curr : prev)];
+
+	console.log(`Now have ${AllInteractionIds.length} interactions, in ${entriesByFrame.length} frames, with ${AllEntries.length} entries.`);
+	console.table(timingsByFrame.map(decorateTimings));
+}
+
+function reportToTimings() {
+	const entriesByFrame = groupEntriesByEstimatedFrameRenderTime(AllEntries);
+	
+	// Filter *frames* which have *only* HOVER interactions.  Leave HOVER events in for the remaining frames to account for timings.
+	// TODO: may want to filer down to only KEY/TAP/DRAG, but I left everything else since its not that much noise typically.
+	let timingsByFrame = entriesByFrame.map(getTimingsForFrame)
+		.filter(timings => timings.interactionTypes.some(type => type != "HOVER"));
+
+	for (const timing of timingsByFrame) {
+		performance.measure(
+			`[Frame] with ${timing.interactionIds.length} Interactions: ${timing.interactionIds.join(',')}, ${timing.interactionTypes.join(',')}`,
+			{
+				start: timing.startTime,
+				end: timing.renderTime,
+			});
+		for (const entry of timing.entries) {
+			performance.measure(`[Event] ${entry.name}.${entry.interactionId}`,
+			{
+				start: entry.processingStart,
+				end: entry.processingEnd,
+			});
+		}
 		
-		// Filter *frames* which have *only* HOVER interactions.  Leave HOVER events in for the remaining frames to account for timings.
-		// TODO: may want to filer down to only KEY/TAP/DRAG, but I left everything else since its not that much noise typically.
-		let timingsByFrame = entriesByFrame.map(getTimingsForFrame)
-			.filter(timings => timings.interactionTypes.some(type => type != "HOVER"));
-
-		// Optional: Filter down the single longest frame
-		// timingsByFrame = [timingsByFrame.reduce((prev,curr) => (curr.duration > prev.duration) ? curr : prev)];
-
-		console.log(`Now have ${AllInteractionIds.length} interactions, in ${entriesByFrame.length} frames, with ${AllEntries.length} entries.`);
-		console.table(timingsByFrame.map(decorateTimings));
-	});
-
-	observer.observe({
-		type: "event",
-		durationThreshold: 0, // 16 minumum by spec
-		buffered: true
-	});
+	}
 }
 
+measureResponsiveness();
 
-function measureEvents() {
-	const observer = new PerformanceObserver(list => {
-		console.group(performance.now().toFixed(1));
-		[...list.getEntries()].forEach(entry => console.log([entry.name, entry.interactionId]));
-		console.groupEnd();
-	});
-
-	observer.observe({
-		type: "event",
-		durationThreshold: 0, // 16 minumum by spec
-		buffered: true
-	});
-}
-
-
-// measureResponsiveness();
-// measureEvents();
+// TODO: Ideally we would do this in setInterval 
+window.addEventListener('beforeunload', () => {
+	reportAsTable();
+	reportToTimings();
+});
