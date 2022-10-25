@@ -15,10 +15,7 @@ export class FpsMeter extends MetricViewer {
 	}
 
 	get score() {
-		return this.frameTimes.length - 1;
-		// const frameDurationInMs = (this.frameTimes.at(-1) - this.frameTimes[0]);
-		// const timePerFrameInMs = frameDurationInMs / (this.frameTimes.length - 1);
-		// return Math.floor(1000 / timePerFrameInMs);
+		return Math.floor((this.frameTimes.length - 1) / WINDOW * 1000);
 	}
 
 	get rating() {
