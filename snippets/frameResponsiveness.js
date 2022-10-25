@@ -171,13 +171,10 @@ function getTimingsForFrame(entries) {
 	// console.log(targetSelectors);
 	const numEntries = entries.length;
 
-	const duration = firstInputEntry.duration;
 	const startTime = firstInputEntry.startTime;
 	const inputDelay = firstProcessedEntry.processingStart - firstInputEntry.startTime;
-	// Almost certainly we have a more accurate paintDelay if we use the estimated real `renderTime` value--
-	// But you may want to use the officially reported value sometimes...
-	// const presentationDelay = getReportedRenderTimeForEntry(lastProcessedEntry) - lastProcessedEntry.processingEnd;
 	const presentationDelay = renderTime - lastProcessedEntry.processingEnd;
+	const duration = renderTime - startTime;
 	
 	const psTime = calculateTotalProcessingTime(entries);
 	const psRange = lastProcessedEntry.processingEnd - firstProcessedEntry.processingStart;
@@ -299,4 +296,4 @@ measureResponsiveness();
 window.addEventListener('beforeunload', () => {
 	reportAsTable();
 	reportToTimings();
-});
+});s
