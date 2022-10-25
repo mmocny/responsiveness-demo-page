@@ -69,8 +69,9 @@ export class DemoViewer extends LitElement {
 	}
 
 	visibleString(fn) {
-		// TODO: compute this from the first line
+		if (!fn) return "";
 		const lines = fn.toString().split('\n').slice(1,-1);
+		if (lines.length == 0) return "";
 		const num_tabs = lines[0].search(/[^\t]/);
 		const readable_code = lines.map(s => s.substring(num_tabs)).join('\n');
 		return readable_code;
@@ -85,26 +86,34 @@ export class DemoViewer extends LitElement {
 		const { title: currentDemoTitle, visible: currentDemoCode } = this.demo;
 		const { title: nextDemoTitle, visible: nextDemoCode } = this.nextDemo;
 
-		return html`
-		<details open>
-			<summary>This Demo: ${currentDemoTitle}</summary>
-			<pre>${this.visibleString(currentDemoCode)}</pre>
-		</details>
+		const currentVisibleDemoCode = this.visibleString(currentDemoCode);
+		const nextVisibleDemoCode = this.visibleString(nextDemoCode);
 
-		${!this.nextDemoTitle ?
-			html `` :
+		return html`
+		${!currentVisibleDemoCode ?
+			html`` :
 			html`
-				<details @toggle=${this.toggleNextCode}>
-					<summary>Next Demo</summary>
-					${nextDemoTitle}
-					<pre>${this.visibleString(nextDemoCode)}</pre>
+				<details open>
+					<summary>This Demo: ${currentDemoTitle}</summary>
+					<pre>${currentVisibleDemoCode}</pre>
 				</details>
 			`
 		}
 
-		<div>
-			${this.prevDemoLink} ${this.nextDemoLink}
-		</div>
+		${!nextDemoTitle ? html`` : !nextVisibleDemoCode ? this.nextDemoLink :
+			html`
+				<details @toggle=${this.toggleNextCode}>
+					<summary>Next Demo</summary>
+					${nextDemoTitle}
+					<pre>${nextVisibleDemoCode}</pre>
+					${this.nextDemoLink}
+				</details>
+			`
+		}
+
+		<!-- <div>
+			${this.prevDemoLink} 
+		</div> -->
 
 		`;
 	}
