@@ -5,7 +5,7 @@ export class ScoreKeeper extends LitElement {
 		score: {},
 	};
 
-	static styles = [ css`
+	static styles = [css`
 		:host {
 			display: grid;
 			grid-template-rows: 1fr min-content;
@@ -20,6 +20,14 @@ export class ScoreKeeper extends LitElement {
 
 		.score {
 			text-align:center;
+			font-size: 3em;
+		}
+		
+		.buttons {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			align-items: center;
+			justify-content: center;
 		}
 	`];
 
@@ -35,7 +43,7 @@ export class ScoreKeeper extends LitElement {
 			<span class="score">
 				Score: ${score}
 			</span>
-			<div>
+			<div class="buttons">
 				<button @click=${this.increment}>
 					Increment
 				</button>
@@ -51,11 +59,11 @@ export class ScoreKeeper extends LitElement {
 	}
 
 	increment() {
-		this.score ++;
+		this.score++;
 	}
 
 	decrement() {
-		this.score --;
+		this.score--;
 	}
 }
 

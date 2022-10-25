@@ -9,22 +9,27 @@ export class AllInteractions extends LitElement {
 
 	static styles = [ cwvStyles, css`
 		:host {
-			max-height: 400px;
 			display: grid;
 			grid-template-rows: min-content 1fr;
 		}
 
 		ul {
-			overflow: scroll;
 			margin: 0;
-			font-size: 16px;
+			font-size: 0.75em;
+
+			max-height: 10em;
+			overflow: scroll;
 		}
 
-		details summary::-webkit-details-marker,
-		details summary::marker {
-			display: none; 
-			content: "";
+		details {
+			overflow: scroll;
 		}
+
+		// details summary::-webkit-details-marker,
+		// details summary::marker {
+		// 	display: none; 
+		// 	content: "";
+		// }
 	`];
 
 	constructor() {

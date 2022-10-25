@@ -17,11 +17,11 @@ export class DemoViewer extends LitElement {
 			font-size: 16px;
 		}
 
-		details summary::-webkit-details-marker,
-		details summary::marker {
-			display: none; 
-			content: "";
-		}
+		// details summary::-webkit-details-marker,
+		// details summary::marker {
+		// 	display: none; 
+		// 	content: "";
+		// }
 	`];
 
 	constructor() {
@@ -56,11 +56,19 @@ export class DemoViewer extends LitElement {
 		const { title, visible, hidden } = this.demo;
 
 
-		return html``;
 		return html`
 		<div>
-			<a .href="${this.prevDemo}">Prev Demo</a>
-			<a .href="${this.nextDemo}">Next Demo</a>
+			${
+				this.prevDemo ?
+				html`<a .href="${this.prevDemo}">Prev Demo</a>` :
+				html`<a>Prev Demo</a>`
+			}
+
+			${
+				this.nextDemo ?
+				html`<a .href="${this.nextDemo}">Next Demo</a>` :
+				html`<a>Next Demo</a>`
+			}
 		</div>
 
 		<details>
