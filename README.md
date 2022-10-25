@@ -1,6 +1,6 @@
 # mmocny's Responsiveness Demos
 
-* [Lightning Talk](./lightningTalk/index.html)
+* [Lightning Talk](./lightningTalk/)
 * [Events Demo](./events_demo/events.html)
 * [Material Demo](./material_demo/material.html)
 * [Canvas Demo](./canvas_demo/canvasDemo.html)
