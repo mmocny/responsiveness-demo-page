@@ -22,14 +22,22 @@
 	</head>
 
 	<body>
-		<score-keeper></score-keeper>
-		<fid-score></fid-score>
-		<inp-score></inp-score>
+		<div class="outter">
+			<score-keeper></score-keeper>
 
-		<fps-meter></fps-meter>
-		<my-timer></my-timer>
+			<div class="scores">
+				<fid-score></fid-score>
+				<inp-score></inp-score>
+			</div>
+
+			<div class="scores">
+				<fps-meter></fps-meter>
+				<my-timer></my-timer>
+			</div>
+
+			<all-interactions></all-interactions>
+		</div>
 
 		<demo-viewer></demo-viewer>
-		<all-interactions></all-interactions>
 	</body>
 </html>

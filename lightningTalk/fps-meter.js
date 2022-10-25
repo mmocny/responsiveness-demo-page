@@ -1,34 +1,20 @@
-import { LitElement, html, css } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/core/lit-core.min.js';
-import { cwvStyles } from './cwv-styles.js';
+import { MetricViewer } from './metric-viewer.js';
 
 const MAX_FRAMES = 10;
 
-export class FpsMeter extends LitElement {
+export class FpsMeter extends MetricViewer {
 	static properties = {
+		// ...MetricViewer.properties,
 		frameTimes: {},
-		rating: {},
 	};
-
-	static styles = [cwvStyles, css`
-		:host {
-			display: block;
-			// border: 1px solid black;
-		}
-	`];
 
 	constructor() {
 		super();
+		this.metricName = "FPS";
 		this.frameTimes = [];
-		this.rating = 'good';
 	}
 
-	render() {
-		const { fps, rating } = this;
-
-		return html`FPS: <span class=${rating}>${fps}</span>`;
-	}
-
-	get fps() {
+	get score() {
 		const frameDurationInMs = (this.frameTimes.at(-1) - this.frameTimes[0]);
 		const timePerFrameInMs = frameDurationInMs / (this.frameTimes.length - 1);
 		return Math.floor(1000 / timePerFrameInMs);
