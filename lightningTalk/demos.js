@@ -11,6 +11,18 @@ export const demos = [
 		visible() {
 		},
 		hidden() {
+			for (let el of document.querySelectorAll('body > *:not(score-keeper):not(demo-viewer)')) {
+				console.log(el);
+				el.style.visibility = "hidden";
+			}
+		}
+	},
+
+	{
+		title: 'Baseline Demo',
+		visible() {
+		},
+		hidden() {
 		}
 	},
 
