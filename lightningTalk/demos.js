@@ -1,5 +1,5 @@
 import shadowQuerySelectorAll from './shadowQuerySelectorAll.js';
-import yieldTask from './schedulerDotYield.js';
+import yieldToMain from './schedulerDotYield.js';
 import { block, addTasks } from './common.js';
 
 const increment = Array.from(shadowQuerySelectorAll('score-keeper >>> button:nth-of-type(1)'))[0];
@@ -99,7 +99,7 @@ export const demos = [
 	},
 
 	{
-		title: 'Fix: requestPostAnimationFrame()',
+		title: 'Fix: request "Post Animation Frame"',
 		visible() {
 			increment.addEventListener('click', () => {
 				requestAnimationFrame(() => {
@@ -133,7 +133,7 @@ export const demos = [
 				requestIdleCallback(async () => {
 					for (let i = 0; i < 100; i++) {
 						if (navigator.scheduling.isInputPending()) {
-							await yieldTask();
+							await yieldToMain();
 						}
 						block(10);
 					}

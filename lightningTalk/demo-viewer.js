@@ -14,10 +14,11 @@ export class DemoViewer extends LitElement {
 			margin-bottom: 100vh;
 		}
 		pre {
-			padding-left: 2em;
+			padding: 0.5em;
 			background-color: #eef;
 			border: 1px solid #dde;
 			border-radius: 5px;
+			tab-size: 2;
 		}
 
 		// details summary::-webkit-details-marker,
@@ -68,31 +69,29 @@ export class DemoViewer extends LitElement {
 	}
 
 	visibleString(fn) {
-		const s = fn.toString().split('\n').slice(1,-1).map(s => s.substring(3)).join('\n');
-		return s;
+		// TODO: compute this from the first line
+		const lines = fn.toString().split('\n').slice(1,-1);
+		const num_tabs = lines[0].search(/[^\t]/);
+		const readable_code = lines.map(s => s.substring(num_tabs)).join('\n');
+		return readable_code;
 	}
 
 	toggleNextCode(evt) {
-		window.scrollTo({ top: this.getBoundingClientRect().y });
+		if (!evt.target.open) return;
+		window.scrollTo({ top: window.scrollY + this.getBoundingClientRect().y });
 	}
 
 	render() {
 		const { title: currentDemoTitle, visible: currentDemoCode } = this.demo;
 		const { title: nextDemoTitle, visible: nextDemoCode } = this.nextDemo;
 
-		console.log(nextDemoTitle);
-
 		return html`
-		<div>
-			${this.prevDemoLink} ${this.nextDemoLink}
-		</div>
-
 		<details open>
 			<summary>This Demo: ${currentDemoTitle}</summary>
 			<pre>${this.visibleString(currentDemoCode)}</pre>
 		</details>
 
-		${this.nextDemoTitle ?
+		${!this.nextDemoTitle ?
 			html `` :
 			html`
 				<details @toggle=${this.toggleNextCode}>
@@ -102,6 +101,11 @@ export class DemoViewer extends LitElement {
 				</details>
 			`
 		}
+
+		<div>
+			${this.prevDemoLink} ${this.nextDemoLink}
+		</div>
+
 		`;
 	}
 
