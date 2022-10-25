@@ -10,8 +10,27 @@ export class MetricViewer extends LitElement {
 
 	static styles = [ cwvStyles, css`
 		:host {
-			display: block;
-			// border: 1px solid black;
+			display: grid;
+			position: relative;
+			min-height: 5em;
+			min-width: 10em;
+			align-items: center;
+			justify-content: center;
+
+			border: 1px solid #ddd;
+			border-radius: 10px;
+			overflow: hidden;
+		}
+
+		.title {
+			position: absolute;
+			top: 0;
+			left: 0;
+			padding: 0.25em;
+		}
+
+		span {
+			font-size: 2em;
 		}
 	`];
 
@@ -24,7 +43,10 @@ export class MetricViewer extends LitElement {
 	render() {
 		const { metricName, score, rating } = this;
 
-		return html`${metricName}: <span class=${rating}>${score}</span>`;
+		return html`
+			<div class="title">${metricName}</div>
+			<span class=${rating}>${score}</span>
+			`;
 	}
 
 	connectedCallback() {
