@@ -29,6 +29,16 @@ export class ScoreKeeper extends LitElement {
 			align-items: center;
 			justify-content: center;
 		}
+
+		button {
+			margin: 5px;
+			padding: 0.5em;
+			font-size: 18px;
+		}
+
+		button:active {
+			background-color:orange;
+		}
 	`];
 
 	constructor() {
