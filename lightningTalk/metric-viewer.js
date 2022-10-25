@@ -37,7 +37,7 @@ export class MetricViewer extends LitElement {
 	constructor() {
 		super();
 		this.metricName = 'NoName';
-		this.rating = 'good';
+		// this.rating = 'good';
 	}
 
 	render() {

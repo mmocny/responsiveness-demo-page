@@ -11,6 +11,12 @@ body {
 	padding: 0;
 }
 
+@media only screen and (max-width: 600px) {
+	body {
+		font-size: 18px;
+	}
+  }
+
 .scores {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);

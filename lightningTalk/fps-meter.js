@@ -1,6 +1,6 @@
 import { MetricViewer } from './metric-viewer.js';
 
-const MAX_FRAMES = 10;
+const WINDOW = 1000;
 
 export class FpsMeter extends MetricViewer {
 	static properties = {
@@ -15,9 +15,16 @@ export class FpsMeter extends MetricViewer {
 	}
 
 	get score() {
-		const frameDurationInMs = (this.frameTimes.at(-1) - this.frameTimes[0]);
-		const timePerFrameInMs = frameDurationInMs / (this.frameTimes.length - 1);
-		return Math.floor(1000 / timePerFrameInMs);
+		return this.frameTimes.length - 1;
+		// const frameDurationInMs = (this.frameTimes.at(-1) - this.frameTimes[0]);
+		// const timePerFrameInMs = frameDurationInMs / (this.frameTimes.length - 1);
+		// return Math.floor(1000 / timePerFrameInMs);
+	}
+
+	get rating() {
+		if (this.score > 40) return 'good';
+		if (this.score > 20) return 'needs-improvement';
+		return 'poor';
 	}
 
 	start() {
@@ -25,11 +32,8 @@ export class FpsMeter extends MetricViewer {
 	}
 
 	addFrameTime(time) {
-		if (this.frameTimes.length == MAX_FRAMES) {
-			this.frameTimes.shift();
-		}
+		this.frameTimes = this.frameTimes.filter(frameTime => (time - frameTime) <= WINDOW);
 		this.frameTimes.push(time);
-		this.requestUpdate();
 	}
 
 	tick(time) {
