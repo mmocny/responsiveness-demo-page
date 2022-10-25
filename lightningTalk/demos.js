@@ -7,7 +7,7 @@ const decrement = Array.from(shadowQuerySelectorAll('score-keeper >>> button:nth
 
 export const demos = [
 	{
-		title: 'Baseline Demo',
+		title: 'Hello World',
 		visible() {
 		},
 		hidden() {
@@ -19,7 +19,7 @@ export const demos = [
 	},
 
 	{
-		title: 'Baseline Demo',
+		title: 'Show Metrics',
 		visible() {
 		},
 		hidden() {
@@ -31,14 +31,14 @@ export const demos = [
 		visible() {
 			setTimeout(() => {
 				block(5000);
-			}, 1000);
+			}, 2000);
 		},
 		hidden() {
 		}
 	},
 
 	{
-		title: 'Periodic blocking',
+		title: 'Post-Load TBT',
 		visible() {
 			setInterval(() => {
 				block(1000);

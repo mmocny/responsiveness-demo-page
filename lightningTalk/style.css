@@ -5,11 +5,19 @@ body {
 	display: grid;
 	grid-template-rows: repeat(5, min-content);
 	align-items: center;
+	justify-content: center;
+
+	margin: 0;
+	padding: 0;
 }
 
 .scores {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
+	min-width: 800px;
+}
+.scores > * {
+	margin: 5px;
 }
 
 all-interactions {
