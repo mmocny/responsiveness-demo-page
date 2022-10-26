@@ -1,9 +1,15 @@
 import shadowQuerySelectorAll from './shadowQuerySelectorAll.js';
 import yieldToMain from './schedulerDotYield.js';
-import { block, addTasks } from './common.js';
+import { block as keepBusy, addTasks } from './common.js';
 
 const increment = Array.from(shadowQuerySelectorAll('score-keeper >>> button:nth-of-type(1)'))[0];
 const decrement = Array.from(shadowQuerySelectorAll('score-keeper >>> button:nth-of-type(2)'))[0];
+
+async function maybeYieldToMain() {
+	if (navigator.scheduling.isInputPending()) {
+		await yieldToMain();
+	}
+}
 
 export const demos = [
 	{
@@ -12,7 +18,6 @@ export const demos = [
 		},
 		hidden() {
 			for (let el of document.querySelectorAll('body > *:not(score-keeper):not(demo-viewer)')) {
-				console.log(el);
 				el.style.visibility = "hidden";
 			}
 		}
@@ -30,7 +35,10 @@ export const demos = [
 		title: 'Loading-only TBT',
 		visible() {
 			setTimeout(() => {
-				block(5000);
+				// work work work
+				for (let i = 0; i < 100; i++) {
+					keepBusy(10);
+				}
 			}, 2000);
 		},
 		hidden() {
@@ -41,7 +49,10 @@ export const demos = [
 		title: 'Post-Load TBT',
 		visible() {
 			setInterval(() => {
-				block(1000);
+				// work work work
+				for (let i = 0; i < 100; i++) {
+					keepBusy(10);
+				}
 			}, 2000);
 		},
 		hidden() {
@@ -52,7 +63,10 @@ export const demos = [
 		title: 'Blocking Click',
 		visible() {
 			increment.addEventListener('click', () => {
-				block(1000);
+				// work work work
+				for (let i = 0; i < 100; i++) {
+					keepBusy(10);
+				}
 			});
 		},
 		hidden() {
@@ -64,7 +78,10 @@ export const demos = [
 		visible() {
 			increment.addEventListener('click', () => {
 				setTimeout(() => {
-					block(1000);
+					// work work work
+					for (let i = 0; i < 100; i++) {
+						keepBusy(10);
+					}
 				}, 0);
 			});
 		},
@@ -77,7 +94,10 @@ export const demos = [
 		visible() {
 			increment.addEventListener('click', () => {
 				setTimeout(() => {
-					block(1000);
+					// work work work
+					for (let i = 0; i < 100; i++) {
+						keepBusy(10);
+					}
 				}, 50);
 			});
 		},
@@ -90,7 +110,10 @@ export const demos = [
 		visible() {
 			increment.addEventListener('click', () => {
 				requestAnimationFrame(() => {
-					block(1000);
+					// work work work
+					for (let i = 0; i < 100; i++) {
+						keepBusy(10);
+					}
 				});
 			});
 		},
@@ -104,7 +127,10 @@ export const demos = [
 			increment.addEventListener('click', () => {
 				requestAnimationFrame(() => {
 					setTimeout(() => {
-						block(1000);
+						// work work work
+						for (let i = 0; i < 100; i++) {
+							keepBusy(10);
+						}
 					}, 0);
 				});
 			});
@@ -118,7 +144,10 @@ export const demos = [
 		visible() {
 			increment.addEventListener('click', () => {
 				requestIdleCallback(() => {
-					block(1000);
+					// work work work
+					for (let i = 0; i < 100; i++) {
+						keepBusy(10);
+					}
 				}, { timeout: 0 });
 			});
 		},
@@ -131,11 +160,10 @@ export const demos = [
 		visible() {
 			increment.addEventListener('click', () => {
 				requestIdleCallback(async () => {
+					// work work work
 					for (let i = 0; i < 100; i++) {
-						if (navigator.scheduling.isInputPending()) {
-							await yieldToMain();
-						}
-						block(10);
+						keepBusy(10);
+						await maybeYieldToMain();
 					}
 				}, { timeout: 0 });
 			});
