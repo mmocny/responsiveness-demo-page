@@ -5,6 +5,7 @@ import { block as keepBusy, addTasks } from './common.js';
 const increment = Array.from(shadowQuerySelectorAll('score-keeper >>> button:nth-of-type(1)'))[0];
 const decrement = Array.from(shadowQuerySelectorAll('score-keeper >>> button:nth-of-type(2)'))[0];
 
+function updateUI() {}
 async function maybeYieldToMain() {
 	if (navigator.scheduling.isInputPending()) {
 		await yieldToMain();
@@ -63,7 +64,9 @@ export const demos = [
 		title: 'Blocking Click',
 		visible() {
 			increment.addEventListener('click', () => {
-				// work work work
+				updateUI();
+
+				// Other work
 				for (let i = 0; i < 100; i++) {
 					keepBusy(10);
 				}
@@ -77,8 +80,9 @@ export const demos = [
 		title: 'Fix: setTimeout(0)',
 		visible() {
 			increment.addEventListener('click', () => {
+				updateUI();
+
 				setTimeout(() => {
-					// work work work
 					for (let i = 0; i < 100; i++) {
 						keepBusy(10);
 					}
@@ -93,8 +97,9 @@ export const demos = [
 		title: 'Fix: setTimeout(50)',
 		visible() {
 			increment.addEventListener('click', () => {
+				updateUI();
+
 				setTimeout(() => {
-					// work work work
 					for (let i = 0; i < 100; i++) {
 						keepBusy(10);
 					}
@@ -109,8 +114,9 @@ export const demos = [
 		title: 'Fix: requestAnimationFrame()',
 		visible() {
 			increment.addEventListener('click', () => {
+				updateUI();
+
 				requestAnimationFrame(() => {
-					// work work work
 					for (let i = 0; i < 100; i++) {
 						keepBusy(10);
 					}
@@ -125,9 +131,10 @@ export const demos = [
 		title: 'Fix: request "Post Animation Frame"',
 		visible() {
 			increment.addEventListener('click', () => {
+				updateUI();
+
 				requestAnimationFrame(() => {
 					setTimeout(() => {
-						// work work work
 						for (let i = 0; i < 100; i++) {
 							keepBusy(10);
 						}
@@ -143,8 +150,9 @@ export const demos = [
 		title: 'Fix: requestIdleCallback()',
 		visible() {
 			increment.addEventListener('click', () => {
+				updateUI();
+
 				requestIdleCallback(() => {
-					// work work work
 					for (let i = 0; i < 100; i++) {
 						keepBusy(10);
 					}
@@ -159,8 +167,9 @@ export const demos = [
 		title: 'Fix: requestIdleCallback() with isInputPending and yield',
 		visible() {
 			increment.addEventListener('click', () => {
+				updateUI();
+
 				requestIdleCallback(async () => {
-					// work work work
 					for (let i = 0; i < 100; i++) {
 						keepBusy(10);
 						await maybeYieldToMain();
