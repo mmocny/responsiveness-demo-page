@@ -36,7 +36,7 @@ export const demos = [
 		visible() {
 			setTimeout(() => {
 				// work work work
-				for (let i = 0; i < 100; i++) {
+				for (let i = 0; i < 300; i++) {
 					keepBusy(10);
 				}
 			}, 2000);
