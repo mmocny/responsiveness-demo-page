@@ -1,14 +1,52 @@
 import shadowQuerySelectorAll from './shadowQuerySelectorAll.js';
-import yieldToMain from './schedulerDotYield.js';
+import { markNeedsNextPaint, schedulerDotYield, schedulerDotYieldUntilNextPaint } from './schedulerDotYield.js';
 import { block as keepBusy, addTasks } from './common.js';
+import { benchmark, reportBenchmarkResultsToConsole } from './benchmark.js';
+
+reportBenchmarkResultsToConsole();
 
 const increment = Array.from(shadowQuerySelectorAll('score-keeper >>> button:nth-of-type(1)'))[0];
 const decrement = Array.from(shadowQuerySelectorAll('score-keeper >>> button:nth-of-type(2)'))[0];
 
-function updateUI() {}
-async function maybeYieldToMain() {
-	if (navigator.scheduling.isInputPending()) {
-		await yieldToMain();
+function updateUI() { }
+
+function makeTasksThatTakeTime(args = {}) {
+	const { total, min, max } = {
+		total: 3000,
+		min: 10,
+		max: 100,
+		...args
+	}
+
+	function getRandomRange(min, max) {
+		const range = max - min;
+		// Linear
+		// const ease = (x) => x;
+		// Cubic
+		// const ease = (x) => x * x * x;
+		// Quint
+		const ease = (x) => x * x * x * x * x;
+
+		const num = ease(Math.random()) * range;
+		return min + num;
+	}
+
+	const tasks = [];
+
+	let remainder = total;
+	while (remainder > 0) {
+		const ms = Math.min(remainder, getRandomRange(min, max));
+		tasks.push(() => keepBusy(ms));
+		remainder -= ms;
+	}
+
+	return tasks;
+}
+
+function doSomeWorkThatTakesTime(ms) {
+	const tasks = makeTasksThatTakeTime({ total: ms });
+	for (let task of tasks) {
+		task();
 	}
 }
 
@@ -35,12 +73,9 @@ export const demos = [
 	{
 		title: 'Loading-only TBT',
 		visible() {
-			setTimeout(() => {
-				// work work work
-				for (let i = 0; i < 300; i++) {
-					keepBusy(10);
-				}
-			}, 2000);
+			setTimeout(
+				() => doSomeWorkThatTakesTime(3000)
+				, 2000);
 		},
 		hidden() {
 		}
@@ -49,27 +84,20 @@ export const demos = [
 	{
 		title: 'Post-Load TBT',
 		visible() {
-			setInterval(() => {
-				// work work work
-				for (let i = 0; i < 100; i++) {
-					keepBusy(10);
-				}
-			}, 2000);
+			setInterval(
+				() => doSomeWorkThatTakesTime(1000)
+				, 2000);
 		},
 		hidden() {
 		}
 	},
 
 	{
-		title: 'Blocking Click',
+		title: 'Click',
 		visible() {
 			increment.addEventListener('click', () => {
 				updateUI();
-
-				// Other work
-				for (let i = 0; i < 100; i++) {
-					keepBusy(10);
-				}
+				doSomeWorkThatTakesTime(1000);
 			});
 		},
 		hidden() {
@@ -77,16 +105,13 @@ export const demos = [
 	},
 
 	{
-		title: 'Fix: setTimeout(0)',
+		title: 'Click -> setTimeout(0)',
 		visible() {
 			increment.addEventListener('click', () => {
 				updateUI();
-
-				setTimeout(() => {
-					for (let i = 0; i < 100; i++) {
-						keepBusy(10);
-					}
-				}, 0);
+				setTimeout(
+					() => doSomeWorkThatTakesTime(1000)
+					, 0);
 			});
 		},
 		hidden() {
@@ -94,16 +119,13 @@ export const demos = [
 	},
 
 	{
-		title: 'Fix: setTimeout(50)',
+		title: 'Click -> setTimeout(50)',
 		visible() {
 			increment.addEventListener('click', () => {
 				updateUI();
-
-				setTimeout(() => {
-					for (let i = 0; i < 100; i++) {
-						keepBusy(10);
-					}
-				}, 50);
+				setTimeout(
+					() => doSomeWorkThatTakesTime(1000)
+					, 50);
 			});
 		},
 		hidden() {
@@ -111,15 +133,28 @@ export const demos = [
 	},
 
 	{
-		title: 'Fix: requestAnimationFrame()',
+		title: 'Click -> requestAnimationFrame()',
 		visible() {
 			increment.addEventListener('click', () => {
 				updateUI();
+				requestAnimationFrame(
+					() => doSomeWorkThatTakesTime(1000)
+				);
+			});
+		},
+		hidden() {
+		}
+	},
 
+	{
+		title: 'Click -> "requestPostAnimationFrame()"',
+		visible() {
+			increment.addEventListener('click', () => {
+				updateUI();
 				requestAnimationFrame(() => {
-					for (let i = 0; i < 100; i++) {
-						keepBusy(10);
-					}
+					setTimeout(
+						() => doSomeWorkThatTakesTime(1000)
+						, 0);
 				});
 			});
 		},
@@ -128,18 +163,13 @@ export const demos = [
 	},
 
 	{
-		title: 'Fix: request "Post Animation Frame"',
+		title: 'Click -> requestIdleCallback()',
 		visible() {
 			increment.addEventListener('click', () => {
 				updateUI();
-
-				requestAnimationFrame(() => {
-					setTimeout(() => {
-						for (let i = 0; i < 100; i++) {
-							keepBusy(10);
-						}
-					}, 0);
-				});
+				requestIdleCallback(
+					() => doSomeWorkThatTakesTime(1000)
+				);
 			});
 		},
 		hidden() {
@@ -147,16 +177,22 @@ export const demos = [
 	},
 
 	{
-		title: 'Fix: requestIdleCallback()',
+		title: 'Add yield()',
 		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms, min: 1, max: 100 });
+
+				for (let task of tasks) {
+					await schedulerDotYield();
+					task();
+				}
+			}
+
 			increment.addEventListener('click', () => {
 				updateUI();
-
-				requestIdleCallback(() => {
-					for (let i = 0; i < 100; i++) {
-						keepBusy(10);
-					}
-				}, { timeout: 0 });
+				requestIdleCallback(
+					() => doSomeWorkThatTakesTime(1000)
+				);
 			});
 		},
 		hidden() {
@@ -164,17 +200,139 @@ export const demos = [
 	},
 
 	{
-		title: 'Fix: requestIdleCallback() with isInputPending and yield',
+		title: 'Remove requestIdleCallback()',
 		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
+				for (let task of tasks) {
+					await schedulerDotYield();
+					task();
+				}
+			}
+
 			increment.addEventListener('click', () => {
 				updateUI();
+				doSomeWorkThatTakesTime(1000);
+			});
+		},
+		hidden() {
+		}
+	},
 
-				requestIdleCallback(async () => {
-					for (let i = 0; i < 100; i++) {
-						keepBusy(10);
-						await maybeYieldToMain();
+	{
+		title: 'Benchmark yield()',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
+				for (let task of tasks) {
+					await schedulerDotYield();
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				updateUI();
+				benchmark(
+					() => doSomeWorkThatTakesTime(1000)
+				);
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
+		title: 'Benchmark without yield()',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
+				for (let task of tasks) {
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				updateUI();
+				benchmark(
+					() => doSomeWorkThatTakesTime(1000)
+				);
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
+		title: 'Add isInputPending()',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
+				for (let task of tasks) {
+					if (navigator.scheduling.isInputPending()) {
+						await schedulerDotYield();
 					}
-				}, { timeout: 0 });
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				updateUI();
+				benchmark(
+					() => doSomeWorkThatTakesTime(1000)
+				);
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
+		title: 'isInputPending() + requestIdleCallback()',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
+				for (let task of tasks) {
+					if (navigator.scheduling.isInputPending()) {
+						await schedulerDotYield();
+					}
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				updateUI();
+				requestIdleCallback(
+					() => benchmark(
+						() => doSomeWorkThatTakesTime(1000)
+					)
+				);
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
+		title: ' Frame aware yield if isInputPending',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
+				for (let task of tasks) {
+					if (navigator.scheduling.isInputPending()) {
+						await schedulerDotYieldUntilNextPaint();
+					}
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				updateUI();
+				markNeedsNextPaint();
+				requestIdleCallback(
+					() => benchmark(
+						() => doSomeWorkThatTakesTime(1000)
+					)
+				);
 			});
 		},
 		hidden() {

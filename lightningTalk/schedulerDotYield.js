@@ -1,25 +1,56 @@
 import setImmediate from './setImmediate.js';
 
-// Note: This will only be true if `schedulerDotYield()` is called before event dispatch
-// Ideally we would have an api for this, perhaps similar to `isFramePending()` though not exactly.
-let needsFrameAfterInput = false;
-
-export default function schedulerDotYield() {
-	if (navigator.scheduling.isInputPending()) {
-		needsFrameAfterInput = true;
-	}
-
+function raf() {
 	return new Promise(resolve => {
-		if (needsFrameAfterInput) {
-			// Altenatively: instead of calling rPAF every time, just call once and maintain an array of tasks
-			requestAnimationFrame(() => {
-				needsFrameAfterInput = false;
-				setImmediate(resolve);
-			});
+		requestAnimationFrame(resolve);
+	})
+}
 
-		} else {
-			setImmediate(resolve);
-		}
+// TODO: (Perhaps) ideally this would be scheduler API, based on dom imvalidation or something
+let needsNextPaint_ = false;
+function needsNextPaint() {
+	return needsNextPaint_;
+}
+
+// TODO: Ideally we don't need to mark ourselves
+function markNeedsNextPaint() {
+	needsNextPaint_ = true;
+	
+	// TODO: This requestPostAnimationFrame()
+	// But, can't guarentee that requestPostAnimationFrame will run early enough.
+	requestAnimationFrame(() => {
+		setImmediate(() => {
+			needsNextPaint_ = false;
+		});
 	});
 }
 
+function markNeedsNextPaintIfNeeded() {
+	// Technically pending input isn't proof that we require next paint..., just that we should yield.
+	// But unless all event handlers call markNeedsNextPaint correctly, lets just mark it anyway.
+	if (navigator.scheduling.isInputPending()) {
+		markNeedsNextPaint();
+	}
+}
+
+function schedulerDotYield() {
+	return new Promise(resolve => {
+		setImmediate(resolve);
+	});
+}
+
+async function schedulerDotYieldUntilNextPaint() {
+	markNeedsNextPaintIfNeeded();
+
+	if (needsNextPaint()) {
+		await raf();
+	}
+	await schedulerDotYield();
+}
+
+
+export {
+	markNeedsNextPaint,
+	schedulerDotYield,
+	schedulerDotYieldUntilNextPaint,
+}

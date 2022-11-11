@@ -3,13 +3,14 @@
  */
 export function block(ms) {
 	const target = performance.now() + ms;
-	console.group(`Inside block(${ms})`);
-	console.log('Starting to block');
+	// console.group(`Inside block(${ms})`);
+	// console.log('Starting to block');
 
 	while (performance.now() < target);
 
-	console.log('Done blocking');
-	console.groupEnd();
+	// console.log('Done blocking');
+	// console.groupEnd();
+	return ms + (performance.now() - target);
 }
 
 /*
