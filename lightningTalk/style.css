@@ -11,11 +11,6 @@ body {
 	padding: 0;
 }
 
-@media only screen and (max-width: 600px) {
-	body {
-		font-size: 18px;
-	}
-  }
 
 .scores {
 	display: grid;
@@ -24,6 +19,19 @@ body {
 }
 .scores > * {
 	margin: 5px;
+}
+
+
+@media only screen and (max-width: 600px) {
+	body {
+		font-size: 14px;
+	}
+
+	.scores {
+		display: grid;
+		grid-template-columns: repeat(1, 1fr);
+		min-width: 300px;
+	}
 }
 
 all-interactions {

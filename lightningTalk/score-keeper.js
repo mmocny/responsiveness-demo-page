@@ -11,7 +11,7 @@ export class ScoreKeeper extends LitElement {
 			grid-template-rows: 1fr min-content;
 
 			min-height: 8em;
-			min-width: 10em;
+			// min-width: 10em;
 			margin: 1em;
 
 			align-items: center;
