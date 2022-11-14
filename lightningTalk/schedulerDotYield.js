@@ -1,4 +1,4 @@
-import setImmediate from './setImmediate.js';
+import setImmediate from './utils/setImmediate.js';
 
 function raf() {
 	return new Promise(resolve => {
@@ -46,11 +46,16 @@ async function schedulerDotYieldUntilNextPaint() {
 		await raf();
 	}
 	await schedulerDotYield();
+
+	console.assert(!needsNextPaint(), 'needsNextPaint after yield!');
+	markNeedsNextPaintIfNeeded();
+	console.assert(!needsNextPaint(), 'isInputPending after yield!');
 }
 
 
 export {
-	markNeedsNextPaint,
 	schedulerDotYield,
+
+	markNeedsNextPaint,
 	schedulerDotYieldUntilNextPaint,
 }

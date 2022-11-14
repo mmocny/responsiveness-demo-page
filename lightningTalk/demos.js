@@ -1,7 +1,7 @@
-import shadowQuerySelectorAll from './shadowQuerySelectorAll.js';
+import shadowQuerySelectorAll from './utils/shadowQuerySelectorAll.js';
 import { markNeedsNextPaint, schedulerDotYield, schedulerDotYieldUntilNextPaint } from './schedulerDotYield.js';
-import { block as keepBusy, addTasks } from './common.js';
-import { benchmark, reportBenchmarkResultsToConsole } from './benchmark.js';
+import { block as keepBusy, addTasks } from './utils/common.js';
+import { benchmark, reportBenchmarkResultsToConsole } from './utils/benchmark.js';
 
 reportBenchmarkResultsToConsole();
 
@@ -338,5 +338,58 @@ export const demos = [
 		hidden() {
 		}
 	},
+
+
+	{
+		title: 'Benchmark: yield()',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms, min: 50, max: 250 });
+				for (let task of tasks) {
+					await schedulerDotYield();
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				updateUI();
+				benchmark(
+					() => doSomeWorkThatTakesTime(1000)
+				);
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
+		title: 'Benchmark: Frame-aware-yield',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms, min: 50, max: 250 });
+				for (let task of tasks) {
+					if (navigator.scheduling.isInputPending()) {
+						await schedulerDotYieldUntilNextPaint();
+					}
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				updateUI();
+				markNeedsNextPaint();
+				requestIdleCallback(
+					() => benchmark(
+						() => doSomeWorkThatTakesTime(1000)
+					)
+				);
+			});
+		},
+		hidden() {
+		}
+	},
+
+
+	
 
 ];
