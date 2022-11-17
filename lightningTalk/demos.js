@@ -1,4 +1,4 @@
-import { markNeedsNextPaint, schedulerDotYield, schedulerDotYieldUntilNextPaint } from './schedulerDotYield.js';
+import { markNeedsNextPaint, schedulerDotYield, schedulerDotYieldIfNeeded } from './schedulerDotYield.js';
 import { makeSomeTasks } from './utils/makeSomeTasks.js'
 import { benchmark, reportBenchmarkResultsToConsole } from './utils/benchmark.js';
 
@@ -370,7 +370,7 @@ export const demos = [
 			async function doSomeWork(ms) {
 				const tasks = makeSomeTasks({ total: ms });
 				for (let task of tasks) {
-					await schedulerDotYieldUntilNextPaint();
+					await schedulerDotYieldIfNeeded();
 					task();
 				}
 			}

@@ -1,9 +1,20 @@
 import setImmediate from './utils/setImmediate.js';
 
-function raf() {
+async function schedulerDotYield() {
+	return new Promise(resolve => {
+		setImmediate(resolve);
+	});
+}
+
+async function rAF() {
 	return new Promise(resolve => {
 		requestAnimationFrame(resolve);
-	})
+	});
+}
+
+async function rPAF() {
+	await rAF();
+	await schedulerDotYield();
 }
 
 // TODO: (Perhaps) ideally this would be scheduler API, based on dom imvalidation or something
@@ -13,61 +24,42 @@ function needsNextPaint() {
 }
 
 // TODO: Ideally we don't need to mark ourselves
-function markNeedsNextPaint() {
+async function markNeedsNextPaint() {
 	needsNextPaint_ = true;
-	
-	// TODO: This requestPostAnimationFrame()
-	// But, can't guarentee that requestPostAnimationFrame will run early enough.
-	requestAnimationFrame(() => {
-		setImmediate(() => {
-			needsNextPaint_ = false;
-		});
-	});
+	await rPAF();
+	needsNextPaint_ = false;
 }
 
-function markNeedsNextPaintIfNeeded() {
+const DEADLINE = 100;
+let last_yield_ = 0;
+function needsYield() {
+	return (performance.now() - last_yield_) > DEADLINE;
+}
+function markDidYield() {
+	last_yield_ = performance.now();
+}
+
+async function schedulerDotYieldIfNeeded() {
 	// Technically pending input isn't proof that we require next paint..., just that we should yield.
 	// But unless all event handlers call markNeedsNextPaint correctly, lets just mark it anyway.
 	if (navigator.scheduling.isInputPending()) {
 		markNeedsNextPaint();
 	}
-}
-
-const DEADLINE = 100;
-let last_checkpoint = 0;
-function markNeedsNextPaintAfterDeadline() {
-	const now = performance.now();
-	const delta = now - last_checkpoint;
-	last_checkpoint = now;
-	if (delta > DEADLINE) {
-		markNeedsNextPaint();
-	}
-}
-
-function schedulerDotYield() {
-	return new Promise(resolve => {
-		setImmediate(resolve);
-	});
-}
-
-async function schedulerDotYieldUntilNextPaint() {
-	markNeedsNextPaintIfNeeded();
-	markNeedsNextPaintAfterDeadline();
-
 	if (needsNextPaint()) {
-		await raf();
+		await rPAF();
+		// Mark after a frame (so deadline resets after)
+		markDidYield();
+	}
+	if (needsYield()) {
+		// Mark before yielding (so deadline resets before)
+		markDidYield();
 		await schedulerDotYield();
 	}
-
-	console.assert(!needsNextPaint(), 'needsNextPaint after yield!');
-	markNeedsNextPaintIfNeeded();
-	console.assert(!needsNextPaint(), 'isInputPending after yield!');
 }
 
 
 export {
 	schedulerDotYield,
-
+	schedulerDotYieldIfNeeded,
 	markNeedsNextPaint,
-	schedulerDotYieldUntilNextPaint,
 }
