@@ -95,7 +95,7 @@ export const demos = [
 	},
 
 	{
-		title: 'setTimeout 2s -> 3s Long Task',
+		title: 'setTimeout -> 3s Long Task',
 		visible() {
 			setTimeout(() => {
 				doSomeWork(3000);
@@ -111,7 +111,7 @@ export const demos = [
 	},
 
 	{
-		title: 'setInterval 2s -> 1s Long Task',
+		title: 'setInterval -> 1s Long Task',
 		visible() {
 			setInterval(() => {
 				doSomeWork(1000);
