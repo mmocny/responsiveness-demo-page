@@ -11,6 +11,7 @@ export class DemoViewer extends LitElement {
 		:host {
 			display: grid;
 			grid-template-rows: min-content 1fr;
+			margin-bottom: 100px;
 		}
 
 		pre {
@@ -60,7 +61,7 @@ export class DemoViewer extends LitElement {
 	get nextDemoLink() {
 		const next = this.demoNumber + 1;
 		if (next >= demos.length)
-			return html`<a>Next Demo</a>`;
+			return html`No more demos!`;
 		return html`<a href="?demo=${next}">Next Demo</a>`;
 
 	}

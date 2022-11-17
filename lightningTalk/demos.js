@@ -1,4 +1,4 @@
-import { markNeedsNextPaint, schedulerDotYield, schedulerDotYieldIfNeeded } from './schedulerDotYield.js';
+import { markNeedsNextPaint, schedulerDotYield, schedulerDotYieldIfNeeded, schedulerDotYieldIfNeededWithDeadlines } from './schedulerDotYield.js';
 import { makeSomeTasks } from './utils/makeSomeTasks.js'
 import { benchmark, reportBenchmarkResultsToConsole } from './utils/benchmark.js';
 
@@ -378,10 +378,31 @@ export const demos = [
 			increment.addEventListener('click', async () => {
 				score.startUpdateUI();
 				markNeedsNextPaint();
-				requestIdleCallback(async () => {
-					await benchmark(() => doSomeWork(1000));
-					score.endUpdateUI();
-				});
+				await benchmark(() => doSomeWork(1000));
+				score.endUpdateUI();
+			});
+		},
+		hidden() {
+		}
+	},
+
+
+	{
+		title: 'Input-aware yield() + deadlines',
+		visible() {
+			async function doSomeWork(ms) {
+				const tasks = makeSomeTasks({ total: ms });
+				for (let task of tasks) {
+					await schedulerDotYieldIfNeededWithDeadlines();
+					task();
+				}
+			}
+
+			increment.addEventListener('click', async () => {
+				score.startUpdateUI();
+				markNeedsNextPaint();
+				await benchmark(() => doSomeWork(1000));
+				score.endUpdateUI();
 			});
 		},
 		hidden() {

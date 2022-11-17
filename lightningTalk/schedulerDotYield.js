@@ -30,15 +30,6 @@ async function markNeedsNextPaint() {
 	needsNextPaint_ = false;
 }
 
-const DEADLINE = 100;
-let last_yield_ = 0;
-function needsYield() {
-	return (performance.now() - last_yield_) > DEADLINE;
-}
-function markDidYield() {
-	last_yield_ = performance.now();
-}
-
 async function schedulerDotYieldIfNeeded() {
 	// Technically pending input isn't proof that we require next paint..., just that we should yield.
 	// But unless all event handlers call markNeedsNextPaint correctly, lets just mark it anyway.
@@ -50,6 +41,19 @@ async function schedulerDotYieldIfNeeded() {
 		// Mark after a frame (so deadline resets after)
 		markDidYield();
 	}
+}
+
+const DEADLINE = 100;
+let last_yield_ = 0;
+function needsYield() {
+	return (performance.now() - last_yield_) > DEADLINE;
+}
+function markDidYield() {
+	last_yield_ = performance.now();
+}
+
+async function schedulerDotYieldIfNeededWithDeadlines() {
+	await schedulerDotYieldIfNeeded();
 	if (needsYield()) {
 		// Mark before yielding (so deadline resets before)
 		markDidYield();
@@ -59,7 +63,8 @@ async function schedulerDotYieldIfNeeded() {
 
 
 export {
+	markNeedsNextPaint,
 	schedulerDotYield,
 	schedulerDotYieldIfNeeded,
-	markNeedsNextPaint,
+	schedulerDotYieldIfNeededWithDeadlines,
 }
