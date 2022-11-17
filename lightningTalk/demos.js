@@ -34,7 +34,7 @@ export const demos = [
 				score.endUpdateUI();
 			});
 
-			for (let el of document.querySelectorAll('body > *:not(score-keeper):not(demo-viewer)')) {
+			for (let el of document.querySelectorAll('body > main > *:not(score-keeper):not(demo-viewer)')) {
 				el.style.visibility = "hidden";
 			}
 		}
