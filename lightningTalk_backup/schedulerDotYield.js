@@ -33,17 +33,6 @@ function markNeedsNextPaintIfNeeded() {
 	}
 }
 
-const DEADLINE = 100;
-let last_checkpoint = 0;
-function markNeedsNextPaintAfterDeadline() {
-	const now = performance.now();
-	const delta = now - last_checkpoint;
-	last_checkpoint = now;
-	if (delta > DEADLINE) {
-		markNeedsNextPaint();
-	}
-}
-
 function schedulerDotYield() {
 	return new Promise(resolve => {
 		setImmediate(resolve);
@@ -52,12 +41,11 @@ function schedulerDotYield() {
 
 async function schedulerDotYieldUntilNextPaint() {
 	markNeedsNextPaintIfNeeded();
-	markNeedsNextPaintAfterDeadline();
 
 	if (needsNextPaint()) {
 		await raf();
-		await schedulerDotYield();
 	}
+	await schedulerDotYield();
 
 	console.assert(!needsNextPaint(), 'needsNextPaint after yield!');
 	markNeedsNextPaintIfNeeded();

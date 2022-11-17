@@ -21,8 +21,6 @@ export class ScoreKeeper extends LitElement {
 		.score {
 			text-align:center;
 			font-size: 3em;
-			white-space: nowrap;
-			text-overflow: ellipsis;
 		}
 		
 		.buttons {
@@ -59,7 +57,7 @@ export class ScoreKeeper extends LitElement {
 
 	getDotsString() {
 		if (this.dots == 0) return "";
-		const totalDots = Math.min(8, 2 + this.dots);
+		const totalDots = Math.min(10, 2 + this.dots);
 		return ".".repeat(totalDots);
 	}
 
@@ -67,7 +65,9 @@ export class ScoreKeeper extends LitElement {
 		const { score } = this;
 
 		return html`
-			<div class="score">Score: ${score} ${this.getDotsString()}</div>
+			<div class="score">
+				Score: ${this.dots > 0 ? this.getDotsString() : score}
+			</div>
 			<div class="buttons">
 				<button>
 					Increment

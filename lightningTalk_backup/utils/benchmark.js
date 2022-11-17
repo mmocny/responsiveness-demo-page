@@ -10,7 +10,7 @@ export function reportBenchmarkResultsToConsole() {
 	new PerformanceObserver(list => {
 		for (let entry of list.getEntries()) {
 			if (entry.name != NAME) continue;
-			console.log(`startTime: ${entry.startTime.toFixed(2)}, duration: ${entry.duration.toFixed(2)}`);
+			console.log(`startTime: ${entry.startTime}, duration: ${entry.duration}`);
 		}
 	}).observe({ type: 'measure' });
 }

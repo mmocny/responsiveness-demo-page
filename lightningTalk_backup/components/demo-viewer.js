@@ -11,6 +11,7 @@ export class DemoViewer extends LitElement {
 		:host {
 			display: grid;
 			grid-template-rows: min-content 1fr;
+			margin-bottom: 100vh;
 		}
 
 		pre {
@@ -20,9 +21,6 @@ export class DemoViewer extends LitElement {
 			border-radius: 5px;
 			tab-size: 2;
 			margin: 0;
-			width: 100%;
-
-			overflow: scroll;
 		}
 
 		// details summary::-webkit-details-marker,
@@ -98,7 +96,7 @@ export class DemoViewer extends LitElement {
 			html`` :
 			html`
 				<div>
-					<summary>${currentDemoTitle}</summary>
+					<!-- <summary>${currentDemoTitle}</summary> -->
 					<pre>${currentVisibleDemoCode}</pre>
 				</div>
 			`

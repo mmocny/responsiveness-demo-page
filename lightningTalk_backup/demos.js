@@ -1,5 +1,6 @@
+import shadowQuerySelectorAll from './utils/shadowQuerySelectorAll.js';
 import { markNeedsNextPaint, schedulerDotYield, schedulerDotYieldUntilNextPaint } from './schedulerDotYield.js';
-import { makeSomeTasks } from './utils/makeSomeTasks.js'
+import makeTasksThatTakeTime from './utils/makeTasksThatTakeTime.js'
 import { benchmark, reportBenchmarkResultsToConsole } from './utils/benchmark.js';
 
 /*** Set up ***/
@@ -10,8 +11,8 @@ const score = document.querySelector('score-keeper');
 const increment = score.shadowRoot.querySelector('button');
 
 // This is the default implementation, gets overridden by some demos
-function doSomeWork(ms) {
-	const tasks = makeSomeTasks({ total: ms });
+function doSomeWorkThatTakesTime(ms) {
+	const tasks = makeTasksThatTakeTime({ total: ms });
 	for (let task of tasks) {
 		task();
 	}
@@ -20,10 +21,6 @@ function doSomeWork(ms) {
 /*** Each of these is one Page of the demo ***/
 
 export const demos = [
-/*
- * Basic Demos
- */
-
 	{
 		title: 'Hello World',
 		visible() {
@@ -43,6 +40,7 @@ export const demos = [
 	{
 		title: 'Click Handler',
 		visible() {
+			// Click Handler
 			increment.addEventListener('click', () => {
 				score.startUpdateUI();
 				score.endUpdateUI();
@@ -53,8 +51,9 @@ export const demos = [
 	},
 
 	{
-		title: 'Click + setTimeout',
+		title: 'Click + Async',
 		visible() {
+			// Click + Async
 			increment.addEventListener('click', () => {
 				score.startUpdateUI();
 				setTimeout(
@@ -66,9 +65,11 @@ export const demos = [
 		}
 	},
 
+
 	{
-		title: 'Click + setTimeout everything',
+		title: 'Async only',
 		visible() {
+			// Everything Async
 			increment.addEventListener('click', () => {
 				setTimeout(
 					() => {
@@ -83,10 +84,59 @@ export const demos = [
 	},
 
 	{
+		title: 'Sync only',
+		visible() {
+			// Everything Sync again
+			increment.addEventListener('click', () => {
+				score.startUpdateUI();
+				score.endUpdateUI();
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
+		title: 'Loading-only TBT',
+		visible() {
+			// Page Load --> Long Task
+			setTimeout(
+				() => doSomeWorkThatTakesTime(3000)
+			, 2000);
+
+			increment.addEventListener('click', () => {
+				score.startUpdateUI();
+				score.endUpdateUI();
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
+		title: 'Post-Load TBT',
+		visible() {
+			// Periodic Long Tasks
+			setInterval(
+				() => doSomeWorkThatTakesTime(1000)
+			, 2000);
+
+			increment.addEventListener('click', () => {
+				score.startUpdateUI();
+				score.endUpdateUI();
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
 		title: 'Click',
 		visible() {
+			// Click -> Work
 			increment.addEventListener('click', () => {
 				score.startUpdateUI();
+				doSomeWorkThatTakesTime(1000);
 				score.endUpdateUI();
 			});
 		},
@@ -95,61 +145,13 @@ export const demos = [
 	},
 
 	{
-		title: 'setTimeout 2s -> 3s Long Task',
+		title: 'Click -> setTimeout(0)',
 		visible() {
-			setTimeout(() => {
-				doSomeWork(3000);
-			}, 2000);
-
-			increment.addEventListener('click', () => {
-				score.startUpdateUI();
-				score.endUpdateUI();
-			});
-		},
-		hidden() {
-		}
-	},
-
-	{
-		title: 'setInterval 2s -> 1s Long Task',
-		visible() {
-			setInterval(() => {
-				doSomeWork(1000);
-			}, 2000);
-
-			increment.addEventListener('click', () => {
-				score.startUpdateUI();
-				score.endUpdateUI();
-			});
-		},
-		hidden() {
-		}
-	},
-
-/*
- * Scheduling work with existing APIs
- */
-
-	{
-		title: 'Click -> Work',
-		visible() {
-			increment.addEventListener('click', () => {
-				score.startUpdateUI();
-				doSomeWork(1000);
-				score.endUpdateUI();
-			});
-		},
-		hidden() {
-		}
-	},
-
-	{
-		title: 'Click -> setTimeout(0) -> Work',
-		visible() {
+			// Click -> setTimeout(0) -> Work
 			increment.addEventListener('click', () => {
 				score.startUpdateUI();
 				setTimeout(() => {
-					doSomeWork(1000);
+					doSomeWorkThatTakesTime(1000);
 					score.endUpdateUI();
 				}, 0);
 			});
@@ -159,12 +161,13 @@ export const demos = [
 	},
 
 	{
-		title: 'Click -> setTimeout(50) -> Work',
+		title: 'Click -> setTimeout(50)',
 		visible() {
+			// Click -> setTimeout(50) -> Work
 			increment.addEventListener('click', () => {
 				score.startUpdateUI();
 				setTimeout(() => {
-					doSomeWork(1000);
+					doSomeWorkThatTakesTime(1000);
 					score.endUpdateUI();
 				}, 50);
 			});
@@ -174,12 +177,13 @@ export const demos = [
 	},
 
 	{
-		title: 'Click -> requestAnimationFrame() -> Work',
+		title: 'Click -> requestAnimationFrame()',
 		visible() {
+			// Click -> requestAnimationFrame() -> Work
 			increment.addEventListener('click', () => {
 				score.startUpdateUI();
 				requestAnimationFrame(() => {
-					doSomeWork(1000);
+					doSomeWorkThatTakesTime(1000);
 					score.endUpdateUI();
 				});
 			});
@@ -189,15 +193,16 @@ export const demos = [
 	},
 
 	{
-		title: 'Click -> requestAnimationFrame() -> setTimeout(0) -> Work"',
+		title: 'Click -> "requestPostAnimationFrame()"',
 		visible() {
+			// Click -> requestAnimationFrame() -> setTimeout(0) -> Work
 			increment.addEventListener('click', () => {
 				score.startUpdateUI();
 				requestAnimationFrame(() => {
 					setTimeout(() => {
-						doSomeWork(1000)
+						doSomeWorkThatTakesTime(1000)
 						score.endUpdateUI();
-					}, 0);
+					} , 0);
 				});
 			});
 		},
@@ -206,39 +211,13 @@ export const demos = [
 	},
 
 	{
-		title: 'Click -> requestIdleCallback() -> Work',
+		title: 'Click -> requestIdleCallback()',
 		visible() {
+			// Click -> requestIdleCallback() -> Work
 			increment.addEventListener('click', () => {
 				score.startUpdateUI();
 				requestIdleCallback(() => {
-					doSomeWork(1000);
-					score.endUpdateUI();
-				});
-			});
-		},
-		hidden() {
-		}
-	},
-
-
-/*
- * scheduler.yield()
- */
-
-	{
-		title: 'Discuss doSomeWork()',
-		visible() {
-			async function doSomeWork(ms) {
-				const tasks = makeSomeTasks({ total: ms });
-				for (let task of tasks) {
-					task();
-				}
-			}
-
-			increment.addEventListener('click', () => {
-				score.startUpdateUI();
-				requestIdleCallback(async () => {
-					await doSomeWork(1000)
+					doSomeWorkThatTakesTime(1000);
 					score.endUpdateUI();
 				});
 			});
@@ -250,20 +229,21 @@ export const demos = [
 	{
 		title: 'Add yield()',
 		visible() {
-			async function doSomeWork(ms) {
-				const tasks = makeSomeTasks({ total: ms });
+			// Let's update to add yield() points
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms, min: 1, max: 100 });
+
 				for (let task of tasks) {
+					await schedulerDotYield();
 					task();
-					await schedulerDotYield(); // <-- Cool
 				}
 			}
 
 			increment.addEventListener('click', () => {
 				score.startUpdateUI();
-				requestIdleCallback(async () => {
-					await doSomeWork(1000);
-					score.endUpdateUI();
-				});
+				requestIdleCallback(
+					() => doSomeWorkThatTakesTime(1000)
+				);
 			});
 		},
 		hidden() {
@@ -273,43 +253,60 @@ export const demos = [
 	{
 		title: 'Remove requestIdleCallback()',
 		visible() {
-			async function doSomeWork(ms) {
-				const tasks = makeSomeTasks({ total: ms });
-				for (let task of tasks) {
-					await schedulerDotYield(); // <-- Do this first
-					task();
-				}
-			}
-
-			increment.addEventListener('click', async () => {
-				score.startUpdateUI();
-				await doSomeWork(1000);
-				score.endUpdateUI();
-			});
-		},
-		hidden() {
-		}
-	},
-
-/*
- * "it's complicated."
- */
-
-	{
-		title: 'Benchmark yield()',
-		visible() {
-			async function doSomeWork(ms) {
-				const tasks = makeSomeTasks({ total: ms });
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
 				for (let task of tasks) {
 					await schedulerDotYield();
 					task();
 				}
 			}
 
-			increment.addEventListener('click', async () => {
+			increment.addEventListener('click', () => {
 				score.startUpdateUI();
-				await benchmark(() => doSomeWork(1000));
-				score.endUpdateUI();
+				doSomeWorkThatTakesTime(1000);
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
+		title: 'Benchmark yield()',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
+				for (let task of tasks) {
+					await schedulerDotYield();
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				score.startUpdateUI();
+				benchmark(
+					() => doSomeWorkThatTakesTime(1000)
+				);
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
+		title: 'Benchmark without yield()',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
+				for (let task of tasks) {
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				score.startUpdateUI();
+				benchmark(
+					() => doSomeWorkThatTakesTime(1000)
+				);
 			});
 		},
 		hidden() {
@@ -319,8 +316,8 @@ export const demos = [
 	{
 		title: 'Add isInputPending()',
 		visible() {
-			async function doSomeWork(ms) {
-				const tasks = makeSomeTasks({ total: ms });
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
 				for (let task of tasks) {
 					if (navigator.scheduling.isInputPending()) {
 						await schedulerDotYield();
@@ -329,10 +326,11 @@ export const demos = [
 				}
 			}
 
-			increment.addEventListener('click', async () => {
+			increment.addEventListener('click', () => {
 				score.startUpdateUI();
-				await benchmark(() => doSomeWork(1000));
-				score.endUpdateUI();
+				benchmark(
+					() => doSomeWorkThatTakesTime(1000)
+				);
 			});
 		},
 		hidden() {
@@ -342,8 +340,8 @@ export const demos = [
 	{
 		title: 'isInputPending() + requestIdleCallback()',
 		visible() {
-			async function doSomeWork(ms) {
-				const tasks = makeSomeTasks({ total: ms });
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
 				for (let task of tasks) {
 					if (navigator.scheduling.isInputPending()) {
 						await schedulerDotYield();
@@ -352,12 +350,13 @@ export const demos = [
 				}
 			}
 
-			increment.addEventListener('click', async () => {
+			increment.addEventListener('click', () => {
 				score.startUpdateUI();
-				requestIdleCallback(async () => {
-					await benchmark(() => doSomeWork(1000));
-					score.endUpdateUI();
-				});
+				requestIdleCallback(
+					() => benchmark(
+						() => doSomeWorkThatTakesTime(1000)
+					)
+				);
 			});
 		},
 		hidden() {
@@ -365,26 +364,83 @@ export const demos = [
 	},
 
 	{
-		title: 'Input-aware yield()',
+		title: ' Frame aware yield if isInputPending',
 		visible() {
-			async function doSomeWork(ms) {
-				const tasks = makeSomeTasks({ total: ms });
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms });
 				for (let task of tasks) {
-					await schedulerDotYieldUntilNextPaint();
+					if (navigator.scheduling.isInputPending()) {
+						await schedulerDotYieldUntilNextPaint();
+					}
 					task();
 				}
 			}
 
-			increment.addEventListener('click', async () => {
+			increment.addEventListener('click', () => {
 				score.startUpdateUI();
 				markNeedsNextPaint();
-				requestIdleCallback(async () => {
-					await benchmark(() => doSomeWork(1000));
-					score.endUpdateUI();
-				});
+				requestIdleCallback(
+					() => benchmark(
+						() => doSomeWorkThatTakesTime(1000)
+					)
+				);
 			});
 		},
 		hidden() {
 		}
 	},
+
+
+	{
+		title: 'Benchmark: yield()',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms, min: 50, max: 250 });
+				for (let task of tasks) {
+					await schedulerDotYield();
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				score.startUpdateUI();
+				benchmark(
+					() => doSomeWorkThatTakesTime(1000)
+				);
+			});
+		},
+		hidden() {
+		}
+	},
+
+	{
+		title: 'Benchmark: Frame-aware-yield',
+		visible() {
+			async function doSomeWorkThatTakesTime(ms) {
+				const tasks = makeTasksThatTakeTime({ total: ms, min: 50, max: 250 });
+				for (let task of tasks) {
+					if (navigator.scheduling.isInputPending()) {
+						await schedulerDotYieldUntilNextPaint();
+					}
+					task();
+				}
+			}
+
+			increment.addEventListener('click', () => {
+				score.startUpdateUI();
+				markNeedsNextPaint();
+				requestIdleCallback(
+					() => benchmark(
+						() => doSomeWorkThatTakesTime(1000)
+					)
+				);
+			});
+		},
+		hidden() {
+		}
+	},
+
+
+	
+
 ];
