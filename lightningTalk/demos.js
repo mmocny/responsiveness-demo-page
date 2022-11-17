@@ -189,7 +189,7 @@ export const demos = [
 	},
 
 	{
-		title: 'Click -> requestAnimationFrame() -> setTimeout(0) -> Work"',
+		title: 'Click -> requestAnimationFrame() -> setTimeout(0) -> Work',
 		visible() {
 			increment.addEventListener('click', () => {
 				score.startUpdateUI();
