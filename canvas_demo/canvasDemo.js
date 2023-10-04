@@ -12,7 +12,7 @@ worker.postMessage({
   msg: 'start',
   canvas_wrkr_raf_main,
   canvas_wrkr_raf_wrkr
-}, [ canvas_wrkr_raf_main, canvas_wrkr_raf_wrkr ]);
+}, [canvas_wrkr_raf_main, canvas_wrkr_raf_wrkr]);
 
 
 // Start tracking frames on main, reporting frame times to worker
@@ -29,14 +29,34 @@ worker.postMessage({
 })();
 
 // Start adding Long Tasks on main
-(async function() {
+(async function () {
+  const el = document.getElementById('long_task_tracker');
   function blog(text) {
-    const el = document.getElementById('long_task_tracker');
     el.textContent = text;
   }
 
+  function durationInMsToClock(durationInMs) {
+    durationInMs = Math.floor(durationInMs);
+    // Calculate hours, minutes, seconds, and milliseconds
+    const milliseconds = durationInMs % 1000;
+    const seconds = Math.floor((durationInMs / 1000) % 60);
+    const minutes = Math.floor((durationInMs / (1000 * 60)) % 60);
+    const hours = Math.floor(durationInMs / (1000 * 60 * 60));
+
+    // Format each component to have leading zeros if needed
+    const formattedHours = String(hours).padStart(2, '0');
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(seconds).padStart(2, '0');
+    const formattedMilliseconds = String(milliseconds).padStart(3, '0');
+
+    // Combine the formatted components into the final string
+    const result = `${formattedHours}:${formattedMinutes}:${formattedSeconds}.${formattedMilliseconds}`;
+
+    return result;
+  }
+
   function block(block_ms) {
-    blog(`blocked for ${block_ms.toFixed(0)}ms`);
+    blog(`page updated at ${durationInMsToClock(performance.now())}`);
 
     let now = performance.now();
     let end = now + block_ms;
@@ -45,34 +65,19 @@ worker.postMessage({
     }
   }
 
-  // Will delay at least one single animation frame
-  async function block_with_delay(block_ms, delay_ms = 0) {
-    const then = performance.now() + delay_ms;
-
-    for await( let time of ThreadLocalRAFIterator() ) {
-      // blog(`will block for ${block_ms.toFixed(0)}ms, in ${(then-time).toFixed(0)}ms`);
-
-      if (time >= then) break;
-    }
-
-    block(block_ms);
-  }
-
-  let interval;
   function toggleLongTasks() {
-    if (interval) {
-      interval = clearInterval(interval);
-    } else {
-      // setInterval default (min) interval is 4ms
-      interval = setInterval(() => {
-        //block((1000/90)/2);
-        block(100);
-        // block_with_delay((1000/90)/2);
-      });
-    }
+    const searchParams = new URLSearchParams(window.location.search);
+    const FPS = 60;
+    const MSPF = 1000 / FPS;
+    const RATIO = 0.5;
+    const blockDuration = +searchParams.get('block') || MSPF * RATIO;
+    const intervalDuration = +searchParams.get('delay') || 0;
+
+    setInterval(() => {
+      block(blockDuration);
+    }, intervalDuration);
   }
 
-  // await block_with_delay(5000, 5000);
   toggleLongTasks();
 
   document.getElementById('t').addEventListener('keydown', (evt) => {
@@ -84,7 +89,7 @@ worker.postMessage({
 // https://dbaron.org/log/20100309-faster-timeouts
 // Only add setZeroTimeout to the window object, and hide everything
 // else in a closure.
-(function() {
+(function () {
   var timeouts = [];
   var messageName = "zero-timeout-message";
 
@@ -92,18 +97,18 @@ worker.postMessage({
   // no time argument (always zero) and no arguments (you have to
   // use a closure).
   function setZeroTimeout(fn) {
-      timeouts.push(fn);
-      window.postMessage(messageName, "*");
+    timeouts.push(fn);
+    window.postMessage(messageName, "*");
   }
 
   function handleMessage(event) {
-      if (event.source == window && event.data == messageName) {
-          event.stopPropagation();
-          if (timeouts.length > 0) {
-              var fn = timeouts.shift();
-              fn();
-          }
+    if (event.source == window && event.data == messageName) {
+      event.stopPropagation();
+      if (timeouts.length > 0) {
+        var fn = timeouts.shift();
+        fn();
       }
+    }
   }
 
   window.addEventListener("message", handleMessage, true);
@@ -129,14 +134,14 @@ export async function reportTimeToNextFrame() {
         if (entry.identifier != id) continue;
 
         let duration = entry.renderTime - start;
-        
+
         console.log('via Element Timing', duration, start, entry);
 
         resolve(duration);
       }
       observer.disconnect();
     });
-    observer.observe({type: 'element'});
+    observer.observe({ type: 'element' });
   });
 
   let viaSingleRaf = new Promise(resolve => {
