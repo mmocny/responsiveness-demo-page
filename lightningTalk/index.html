@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Responsiveness Lightning Talk -- performance.now()</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+
+		<link rel="stylesheet" href="./reset.css">
+		<link rel="stylesheet" href="./style.css">
+
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@1,800&display=swap" rel="stylesheet">
+
+		<script type="module" src="./components/score-keeper.js"></script>
+		<script type="module" src="./components/fid-score.js"></script>
+		<script type="module" src="./components/inp-score.js"></script>
+		<script type="module" src="./components/my-timer.js"></script>
+		<script type="module" src="./components/fps-meter.js"></script>
+		<script type="module" src="./components/all-interactions.js"></script>
+		<script type="module" src="./components/demo-viewer.js"></script>
+
+	</head>
+
+	<body>
+		<main>
+			<score-keeper></score-keeper>
+
+			<div class="scores">
+				<fid-score></fid-score>
+				<inp-score></inp-score>
+				<fps-meter></fps-meter>
+				<my-timer></my-timer>
+			</div>
+
+			<all-interactions></all-interactions>
+
+			<demo-viewer></demo-viewer>
+		</main>
+	</body>
+</html>

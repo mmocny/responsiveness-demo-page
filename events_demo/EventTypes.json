@@ -1,0 +1,472 @@
+{
+	"AbortSignal": [
+	  "abort"
+	],
+	"AudioScheduledSourceNode": [
+	  "ended"
+	],
+	"AudioTrackList": [
+	  "addtrack",
+	  "change",
+	  "removetrack"
+	],
+	"BroadcastChannel": [
+	  "messageerror",
+	  "message"
+	],
+	"DedicatedWorkerGlobalScope": [
+	  "messageerror",
+	  "message"
+	],
+	"Document": [
+	  "animationcancel",
+	  "animationend",
+	  "animationiteration",
+	  "animationstart",
+	  "copy",
+	  "cut",
+	  "DOMContentLoaded",
+	  "dragend",
+	  "dragenter",
+	  "dragleave",
+	  "dragover",
+	  "dragstart",
+	  "drag",
+	  "drop",
+	  "fullscreenchange",
+	  "fullscreenerror",
+	  "gotpointercapture",
+	  "keydown",
+	  "keypress",
+	  "keyup",
+	  "lostpointercapture",
+	  "paste",
+	  "pointercancel",
+	  "pointerdown",
+	  "pointerenter",
+	  "pointerleave",
+	  "pointerlockchange",
+	  "pointerlockerror",
+	  "pointermove",
+	  "pointerout",
+	  "pointerover",
+	  "pointerup",
+	  "readystatechange",
+	  "scroll",
+	  "selectionchange",
+	  "selectstart",
+	  "touchcancel",
+	  "touchend",
+	  "touchmove",
+	  "touchstart",
+	  "transitioncancel",
+	  "transitionend",
+	  "transitionrun",
+	  "transitionstart",
+	  "visibilitychange",
+	  "wheel"
+	],
+	"Element": [
+	  "afterscriptexecute",
+	  "auxclick",
+	  "beforescriptexecute",
+	  "blur",
+	  "click",
+	  "compositionend",
+	  "compositionstart",
+	  "compositionupdate",
+	  "contextmenu",
+	  "copy",
+	  "cut",
+	  "dblclick",
+	  "DOMActivate",
+	  "DOMMouseScroll",
+	  "error",
+	  "focusin",
+	  "focusout",
+	  "focus",
+	  "fullscreenchange",
+	  "fullscreenerror",
+	  "gesturechange",
+	  "gestureend",
+	  "gesturestart",
+	  "keydown",
+	  "keypress",
+	  "keyup",
+	  "mousedown",
+	  "mouseenter",
+	  "mouseleave",
+	  "mousemove",
+	  "mouseout",
+	  "mouseover",
+	  "mouseup",
+	  "mousewheel",
+	  "msContentZoom",
+	  "MSGestureChange",
+	  "MSGestureEnd",
+	  "MSGestureHold",
+	  "MSGestureStart",
+	  "MSGestureTap",
+	  "MSInertiaStart",
+	  "MSManipulationStateChanged",
+	  "paste",
+	  "scroll",
+	  "select",
+	  "show",
+	  "touchcancel",
+	  "touchend",
+	  "touchmove",
+	  "touchstart",
+	  "webkitmouseforcechanged",
+	  "webkitmouseforcedown",
+	  "webkitmouseforceup",
+	  "webkitmouseforcewillbegin",
+	  "wheel"
+	],
+	"EventSource": [
+	  "error",
+	  "message",
+	  "open"
+	],
+	"FileReader": [
+	  "abort",
+	  "error",
+	  "loadend",
+	  "loadstart",
+	  "load",
+	  "progress"
+	],
+	"HTMLCanvasElement": [
+	  "webglcontextcreationerror",
+	  "webglcontextlost",
+	  "webglcontextrestored"
+	],
+	"HTMLDetailsElement": [
+	  "toggle"
+	],
+	"HTMLDialogElement": [
+	  "cancel",
+	  "close"
+	],
+	"HTMLElement": [
+	  "animationcancel",
+	  "animationend",
+	  "animationiteration",
+	  "animationstart",
+	  "beforeinput",
+	  "change",
+	  "gotpointercapture",
+	  "input",
+	  "lostpointercapture",
+	  "pointercancel",
+	  "pointerdown",
+	  "pointerenter",
+	  "pointerleave",
+	  "pointermove",
+	  "pointerout",
+	  "pointerover",
+	  "pointerup",
+	  "transitioncancel",
+	  "transitionend",
+	  "transitionrun",
+	  "transitionstart"
+	],
+	"HTMLFormElement": [
+	  "formdata",
+	  "reset",
+	  "submit"
+	],
+	"HTMLInputElement": [
+	  "invalid",
+	  "search"
+	],
+	"HTMLMediaElement": [
+	  "abort",
+	  "canplaythrough",
+	  "canplay",
+	  "durationchange",
+	  "emptied",
+	  "ended",
+	  "error",
+	  "loadeddata",
+	  "loadedmetadata",
+	  "loadstart",
+	  "pause",
+	  "playing",
+	  "play",
+	  "progress",
+	  "ratechange",
+	  "seeked",
+	  "seeking",
+	  "stalled",
+	  "suspend",
+	  "timeupdate",
+	  "volumechange",
+	  "waiting"
+	],
+	"HTMLSlotElement": [
+	  "slotchange"
+	],
+	"HTMLTrackElement": [
+	  "cuechange"
+	],
+	"HTMLVideoElement": [
+	  "enterpictureinpicture",
+	  "leavepictureinpicture"
+	],
+	"IDBDatabase": [
+	  "abort",
+	  "close",
+	  "error",
+	  "versionchange"
+	],
+	"IDBOpenDBRequest": [
+	  "blocked",
+	  "upgradeneeded"
+	],
+	"IDBRequest": [
+	  "error",
+	  "success"
+	],
+	"IDBTransaction": [
+	  "abort",
+	  "complete",
+	  "error"
+	],
+	"MediaDevices": [
+	  "devicechange"
+	],
+	"MediaRecorder": [
+	  "error"
+	],
+	"MediaStream": [
+	  "addtrack",
+	  "removetrack"
+	],
+	"MediaStreamTrack": [
+	  "ended",
+	  "mute",
+	  "unmute"
+	],
+	"MessagePort": [
+	  "messageerror",
+	  "message"
+	],
+	"OfflineAudioContext": [
+	  "complete"
+	],
+	"PaymentRequest": [
+	  "merchantvalidation",
+	  "paymentmethodchange",
+	  "shippingaddresschange",
+	  "shippingoptionchange"
+	],
+	"PaymentResponse": [
+	  "payerdetailchange"
+	],
+	"Performance": [
+	  "resourcetimingbufferfull"
+	],
+	"PictureInPictureWindow": [
+	  "resize"
+	],
+	"RTCDataChannel": [
+	  "bufferedamountlow",
+	  "close",
+	  "closing",
+	  "error",
+	  "message",
+	  "open"
+	],
+	"RTCDtlsTransport": [
+	  "error"
+	],
+	"RTCDTMFSender": [
+	  "tonechange"
+	],
+	"RTCIceTransport": [
+	  "gatheringstatechange",
+	  "selectedcandidatepairchange",
+	  "statechange"
+	],
+	"RTCPeerConnection": [
+	  "addstream",
+	  "connectionstatechange",
+	  "datachannel",
+	  "icecandidateerror",
+	  "icecandidate",
+	  "iceconnectionstatechange",
+	  "icegatheringstatechange",
+	  "negotiationneeded",
+	  "removestream",
+	  "signalingstatechange",
+	  "track"
+	],
+	"ScriptProcessorNode": [
+	  "audioprocess"
+	],
+	"ServiceWorkerContainer": [
+	  "message"
+	],
+	"ServiceWorkerGlobalScope": [
+	  "activate",
+	  "contentdelete",
+	  "install",
+	  "message",
+	  "notificationclick",
+	  "pushsubscriptionchange",
+	  "push"
+	],
+	"SharedWorkerGlobalScope": [
+	  "connect"
+	],
+	"SpeechRecognition": [
+	  "audioend",
+	  "audiostart",
+	  "end",
+	  "error",
+	  "nomatch",
+	  "result",
+	  "soundend",
+	  "soundstart",
+	  "speechend",
+	  "speechstart",
+	  "start"
+	],
+	"SpeechSynthesis": [
+	  "voiceschanged"
+	],
+	"SpeechSynthesisUtterance": [
+	  "boundary",
+	  "end",
+	  "error",
+	  "mark",
+	  "pause",
+	  "resume",
+	  "start"
+	],
+	"SVGAnimationElement": [
+	  "beginEvent",
+	  "endEvent",
+	  "repeatEvent"
+	],
+	"SVGElement": [
+	  "abort",
+	  "error",
+	  "load",
+	  "resize",
+	  "scroll",
+	  "unload"
+	],
+	"SVGGraphicsElement": [
+	  "copy",
+	  "cut",
+	  "paste"
+	],
+	"TextTrack": [
+	  "cuechange"
+	],
+	"TextTrackList": [
+	  "addtrack",
+	  "change",
+	  "removeTrack"
+	],
+	"VideoTrackList": [
+	  "addtrack",
+	  "change",
+	  "removetrack"
+	],
+	"VisualViewport": [
+	  "resize",
+	  "scroll"
+	],
+	"WebSocket": [
+	  "close",
+	  "error",
+	  "message",
+	  "open"
+	],
+	"Window": [
+	  "afterprint",
+	  "animationcancel",
+	  "animationend",
+	  "animationiteration",
+	  "animationstart",
+	  "appinstalled",
+	  "beforeprint",
+	  "beforeunload",
+	  "blur",
+	  "copy",
+	  "cut",
+	  "devicemotion",
+	  "deviceorientation",
+	  "DOMContentLoaded",
+	  "error",
+	  "focus",
+	  "gamepadconnected",
+	  "gamepaddisconnected",
+	  "hashchange",
+	  "languagechange",
+	  "load",
+	  "messageerror",
+	  "message",
+	  "offline",
+	  "online",
+	  "orientationchange",
+	  "pagehide",
+	  "pageshow",
+	  "paste",
+	  "popstate",
+	  "rejectionhandled",
+	  "resize",
+	  "storage",
+	  "transitioncancel",
+	  "transitionend",
+	  "transitionrun",
+	  "transitionstart",
+	  "unhandledrejection",
+	  "unload",
+	  "vrdisplayactivate",
+	  "vrdisplayblur",
+	  "vrdisplayconnect",
+	  "vrdisplaydeactivate",
+	  "vrdisplaydisconnect",
+	  "vrdisplayfocus",
+	  "vrdisplaypointerrestricted",
+	  "vrdisplaypointerunrestricted",
+	  "vrdisplaypresentchange"
+	],
+	"Worker": [
+	  "messageerror",
+	  "message"
+	],
+	"WorkerGlobalScope": [
+	  "languagechange"
+	],
+	"XMLHttpRequest": [
+	  "abort",
+	  "error",
+	  "loadend",
+	  "loadstart",
+	  "load",
+	  "progress",
+	  "timeout"
+	],
+	"XRReferenceSpace": [
+	  "reset"
+	],
+	"XRSession": [
+	  "end",
+	  "inputsourceschange",
+	  "selectend",
+	  "selectstart",
+	  "select",
+	  "squeezeend",
+	  "squeezestart",
+	  "squeeze",
+	  "visibilitychange"
+	],
+	"XRSystem": [
+	  "devicechange"
+	]
+}

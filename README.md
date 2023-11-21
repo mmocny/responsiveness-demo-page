@@ -1,1 +1,6 @@
-Switch to the [gh-pages](https://github.com/mmocny/responsiveness-demo-page/tree/gh-pages) branch.
+# mmocny's Responsiveness Demos
+
+* [Lightning Talk](./lightningTalk/)
+* [Events Demo](./events_demo/events.html)
+* [Material Demo](./material_demo/material.html)
+* [Canvas Demo](./canvas_demo/canvasDemo.html)
